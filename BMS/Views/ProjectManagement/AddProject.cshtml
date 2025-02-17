@@ -1,0 +1,70 @@
+﻿
+<div class="row pt-2">
+    <div class="col-11">
+        <a asp-controller="ProjectManagement" asp-action="Index">项目列表</a><span>></span>创建项目
+    </div>
+</div>
+
+<div class="row pt-2">
+    <div class="col-12">
+        <form class="needs-validation" novalidate="" enctype="multipart/form-data">
+            <div class="row pt-2">
+                <div class="col-6">
+                    <label for="CustomerProjectNumber" class="form-label">供应商项目编号<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="CustomerProjectNumber" name="CustomerProjectNumber" value="11111111" required>
+                    <div class="invalid-feedback">
+                        请输入供应商项目编号
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label for="CustomerProjectName" class="form-label">供应商项目名称</label>
+                    <input type="text" class="form-control"  id="CustomerProjectName" name="CustomerProjectName" value="aaaaaaa">
+                    <div class="invalid-feedback">
+                        请输入供应商项目名称
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-6">
+                    <label for="MyProjectNumber" class="form-label">我的项目编号<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="MyProjectNumber" name="MyProjectNumber" value="222222222" required>
+                    <div class="invalid-feedback">
+                        请输入我的项目编号
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label for="MyProjectName" class="form-label">我的项目名称</label>
+                    <input type="text" class="form-control" name="MyProjectName" id="MyProjectName" value="bbbbbbbbb">
+                    <div class="invalid-feedback">
+                        请输入我的项目名称
+                    </div>
+                </div>
+            </div>
+           <div class="row g-3 pt-2">
+                <div class="col-6">
+                    <label for="ProjectType" class="form-label">项目分类</label>
+                    <select class="form-select" name="ProjectType" id="ProjectType">
+                        <option value="未分类">未分类</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row pt-3 mb-3">
+                <div class="col-1 mx-auto">
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">确定</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+
+<script>
+    var addProjectUrl = '@Url.Action("AddProject", "ProjectManagement")';
+    var projectListUrl = '@Url.Action("Index", "ProjectManagement")';
+</script>
+<script src="~/js/ProjectManagement/add_project.js"></script>
+
+
+
+}

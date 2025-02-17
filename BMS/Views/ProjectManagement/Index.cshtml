@@ -1,0 +1,71 @@
+﻿@model List<BMS.Models.ProjectManagement.ProjectInfo>
+
+<div class="row">
+    <div class="row pt-2">
+        <div class="col-11">
+            <p class="h5">项目列表 </p>
+        </div>
+        <div class="col-1 ">
+            <a asp-controller="ProjectManagement" asp-action="AddProject" class="btn btn-primary d-inline-flex align-items-center">
+                新建项目
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row pt-3">
+    <div class="col-12">
+        <table id="table" class="table table-responsive"
+               data-toggle="table"
+               data-search="true"
+               data-pagination="true">
+            <thead class="thead-light">
+                <tr>
+                    <th>序号</th>
+                    <th>供应商项目编号</th>
+                    <th>供应商项目名称</th>
+                    <th>我的项目编号</th>
+                    <th>我的项目名称</th>
+                    <th>项目分类</th>
+                    <th>设备数</th>
+                    <th>创建时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++) {
+                    <tr>
+                        <td>@(i+1)</td>
+                        <td>@Model[i].CustomerProjectNumber</td>
+                        <td>@Model[i].CustomerProjectName</td>
+                        <td>@Model[i].MyProjectNumber</td>
+                        <td>@Model[i].MyProjectName</td>
+                        <td>@Model[i].ProjectType</td>
+                        <td>xxx</td>
+                        <td>@Model[i].CreateTime.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*@await Html.PartialAsync("~/Views/PowerStationManagement/_IndexViewDetailsModal.cshtml")
+@await Html.PartialAsync("~/Views/PowerStationManagement/_IndexBindCabinetModal.cshtml")
+@await Html.PartialAsync("~/Views/PowerStationManagement/_IndexBindUserModal.cshtml")*@
+
+@section Scripts{
+@*<script>
+    var addPowerStationUrl = '@Url.Action("AddPowerStation", "PowerStationManagement")';
+    var seeDetailsUrl = '@Url.Action("GetPowerStationInfoById", "PowerStationManagement")';
+    var deletePowerStationUrl = '@Url.Action("DeletePowerStation", "PowerStationManagement")';
+    var getAllCabinetListUrl = '@Url.Action("GetAllCabinetList", "PowerStationManagement")';
+    var bindCabinetToPowerStationUrl = '@Url.Action("BindCabinetToPowerStation", "PowerStationManagement")';
+    var getAllUserListUrl = '@Url.Action("GetAllBindUserList", "PowerStationManagement")';
+    var bindPowerStationToUserUrl = '@Url.Action("BindPowerStationToUser", "PowerStationManagement")';
+
+</script>
+<script src="~/js/PowerStationManagement/see_details.js"></script>
+<script src="~/js/PowerStationManagement/bind_cabinet.js"></script>
+<script src="~/js/PowerStationManagement/bind_user.js"></script>
+<script src="~/js/PowerStationManagement/delete_powerstation.js"></script>*@
+}
