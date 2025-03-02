@@ -38,8 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\CustomerManagement\AddCustomerInfo.cshtml" />
+    <None Include="Views\CustomerManagement\Index.cshtml" />
+    <None Include="Views\DeviceManagement\Index.cshtml" />
+    <None Include="Views\DeviceManagement\_IndexBindProjectModalModal.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Home\Privacy.cshtml" />
+    <None Include="Views\ProjectManagement\AddProject.cshtml" />
+    <None Include="Views\ProjectManagement\Index.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
@@ -593,6 +599,7 @@
     <None Include="wwwroot\bootstrap-fileinput\node_modules\opencollective-postinstall\README.md" />
     <None Include="wwwroot\echarts\echarts.min.js" />
     <None Include="wwwroot\flatpickr\flatpickr.min.js" />
+    <None Include="wwwroot\js\ProjectManagement\add_project.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
@@ -697,10 +704,6 @@
     <TypeScriptCompile Include="wwwroot\bootstrap-fileinput\node_modules\%40popperjs\core\lib\utils\uniqueBy.d.ts" />
     <TypeScriptCompile Include="wwwroot\bootstrap-fileinput\node_modules\%40popperjs\core\lib\utils\userAgent.d.ts" />
     <TypeScriptCompile Include="wwwroot\bootstrap-fileinput\node_modules\%40popperjs\core\lib\utils\within.d.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DB\" />
   </ItemGroup>
 
   <ItemGroup>

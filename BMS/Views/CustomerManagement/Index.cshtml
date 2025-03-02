@@ -1,0 +1,57 @@
+﻿
+<div class="row">
+    <div class="row pt-2">
+        <div class="col-11">
+            <p class="h5">客户列表 </p>
+        </div>
+        <div class="col-1 ">
+            <a asp-controller="CustomerManagement" asp-action="AddCustomerInfo" class="btn btn-primary d-inline-flex align-items-center">
+                新建客户
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row pt-3">
+    <div class="col-12">
+        <table id="table" class="table table-responsive"
+               data-toggle="table"
+               data-search="true"
+               data-pagination="true">
+            <thead class="thead-light">
+                <tr>
+                    <th>序号</th>
+                    <th>客户名称</th>
+                    <th>项目数</th>
+                    <th>设备数</th>
+                    <th>创建日期</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*@for (int i = 0; i < Model.Count; i++) {
+                    <tr>
+                        <td>@(i+1)</td>
+                        <td>AA</td>
+                        <td>BB</td>
+                        <td>@Model[i].MyProjectNumber</td>
+                        <td>@Model[i].MyProjectName</td>
+                        <td>@Model[i].ProjectType</td>
+                        <td>xxx</td>
+                        <td class="gap-1">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal" data-id="@Model[i].Id">查看</button>
+                            <a class="btn btn-outline-primary btn-sm" asp-controller="PowerStationManagement" asp-action="EditPowerStation" asp-route-id="@Model[i].Id">修改</a>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteStation(@Model[i].Id)">删除</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindCabinetModal" data-name="@Model[i].Name" data-id="@Model[i].Id">绑定电站</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindUserModal" data-name="@Model[i].Name" data-id="@Model[i].Id">绑定用户</button>
+                        </td>
+                    </tr>
+                }*@
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Scripts{
+}

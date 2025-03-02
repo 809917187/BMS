@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BMS.Controllers {
     public class ProjectManagementController : Controller {
-		private readonly IProjectManagementService _projectManagementService;
-		public ProjectManagementController(IProjectManagementService projectManagementService) {
-			_projectManagementService = projectManagementService;
-		}
+        private readonly IProjectManagementService _projectManagementService;
+        public ProjectManagementController(IProjectManagementService projectManagementService) {
+            _projectManagementService = projectManagementService;
+        }
 
 
         public IActionResult Index() {
@@ -30,14 +30,27 @@ namespace BMS.Controllers {
                     if (_projectManagementService.AddProjectInfo(model)) {
                         return Ok(new { status = 200, message = "项目创建成功" });
                     } else {
-						return BadRequest("项目新建失败");
-					}
+                        return BadRequest("项目新建失败");
+                    }
 
-				}
+                }
 
             } catch (Exception ex) {
                 return BadRequest("项目新建失败");
             }
+        }
+
+        [HttpGet]
+        public IActionResult GetProjectList(int deviceId) {
+            var allProjectInfos = _projectManagementService.GetAllProjectInfo();
+
+            var bindProject = _projectManagementService.GetBindedProjectByDeviceId(deviceId);
+
+            if (bindProject != null) {
+                allProjectInfos.Find(s => s.Id == bindProject.Id).IsSelected = true;
+            }
+
+            return Ok(allProjectInfos);
         }
     }
 }

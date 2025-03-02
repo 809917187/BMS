@@ -1,0 +1,39 @@
+﻿
+<div class="row pt-2">
+    <div class="col-11">
+        <a asp-controller="CustomerManagement" asp-action="Index">客户列表</a><span>></span>创建客户
+    </div>
+</div>
+
+<div class="row pt-2">
+    <div class="col-12">
+        <form class="needs-validation" novalidate="" enctype="multipart/form-data">
+            <div class="row pt-2">
+                <div class="col-12">
+                    <label for="CustomerName" class="form-label">客户名称<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="CustomerName" name="CustomerName" value="AAAAA" required>
+                    <div class="invalid-feedback">
+                        请输入客户名称
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-3 mb-3">
+                <div class="col-1 mx-auto">
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">确定</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+
+<script>
+    var addCustomerUrl = '@Url.Action("AddCustomerInfo", "CustomerManagement")';
+    var CustomerListUrl = '@Url.Action("Index", "CustomerManagement")';
+</script>
+<script src="~/js/CustomerManagement/add_customer.js"></script>
+
+
+
+}
