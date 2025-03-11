@@ -2,13 +2,19 @@
 
 <div class="row">
     <div class="row pt-2">
-        <div class="col-11">
+        <div class="col-10">
             <p class="h5">设备列表 </p>
         </div>
         <div class="col-1 ">
-            <a asp-controller="DeviceManagement" asp-action="ImportDevice" class="btn btn-primary d-inline-flex align-items-center">
+            <a asp-controller="DeviceManagement" asp-action="DownloadTemplate" class="btn btn-primary d-inline-flex align-items-center">
+                下载模板
+            </a>
+        </div>
+        <div class="col-1 ">
+            <a href="javascript:void(0);" class="btn btn-primary d-inline-flex align-items-center" id="importBtn">
                 导入设备
             </a>
+            <input type="file" id="fileInput" accept=".xlsx, .xls" style="display:none" />
         </div>
     </div>
 </div>
@@ -53,11 +59,15 @@
 @await Html.PartialAsync("~/Views/DeviceManagement/_IndexBindProjectModalModal.cshtml")
 
 @section Scripts{
-    <script>
-        var getProjectListUrl = '@Url.Action("GetProjectList", "ProjectManagement")';
-        var deviceBindToProjectUrl = '@Url.Action("DeviceBindToProject", "DeviceManagement")';
-        var projectListUrl = '@Url.Action("Index", "DeviceManagement")';
+<script>
+    var getProjectListUrl = '@Url.Action("GetProjectListByDeviceId", "ProjectManagement")';
+    var deviceBindToProjectUrl = '@Url.Action("DeviceBindToProject", "DeviceManagement")';
+    var deviceListUrl = '@Url.Action("Index", "DeviceManagement")';
+    var ImportDeviceInfoUrl = '@Url.Action("ImportDeviceInfo", "DeviceManagement")';
 
-    </script>
-    <script src="~/js/DeviceManagement/bind_project.js"></script>
+   
+
+</script>
+<script src="~/js/DeviceManagement/bind_project.js"></script>
+<script src="~/js/DeviceManagement/import_device_info.js"></script>
 }

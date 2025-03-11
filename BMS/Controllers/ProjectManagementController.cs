@@ -41,7 +41,7 @@ namespace BMS.Controllers {
         }
 
         [HttpGet]
-        public IActionResult GetProjectList(int deviceId) {
+        public IActionResult GetProjectListByDeviceId(int deviceId) {
             var allProjectInfos = _projectManagementService.GetAllProjectInfo();
 
             var bindProject = _projectManagementService.GetBindedProjectByDeviceId(deviceId);
@@ -52,5 +52,36 @@ namespace BMS.Controllers {
 
             return Ok(allProjectInfos);
         }
+
+        [HttpGet]
+        public IActionResult GetProjectListByCustomerId(int customerId) {
+            var allProjectInfos = _projectManagementService.GetAllProjectInfo();
+
+            var bindProjectIds = _projectManagementService.GetBindedProjectIdsByCustomerId(customerId);
+
+            if (bindProjectIds != null && bindProjectIds.Count > 0) {
+
+                foreach (int id in bindProjectIds) {
+                    allProjectInfos.Find(s => s.Id == id).IsSelected = true;
+                }
+            }
+            return Ok(allProjectInfos);
+        }
+
+        [HttpGet]
+        public IActionResult GetProjectListByGroupId(int groupId) {
+            var allProjectInfos = _projectManagementService.GetAllProjectInfo();
+
+            var bindProjectIds = _projectManagementService.GetBindedProjectIdsByGroupId(groupId);
+
+            if (bindProjectIds != null && bindProjectIds.Count > 0) {
+
+                foreach (int id in bindProjectIds) {
+                    allProjectInfos.Find(s => s.Id == id).IsSelected = true;
+                }
+            }
+            return Ok(allProjectInfos);
+        }
+        
     }
 }

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\GroupManagement\bind_project.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
   </ItemGroup>
 
@@ -40,8 +44,10 @@
   <ItemGroup>
     <None Include="Views\CustomerManagement\AddCustomerInfo.cshtml" />
     <None Include="Views\CustomerManagement\Index.cshtml" />
+    <None Include="Views\CustomerManagement\_IndexBindProjectModal.cshtml" />
     <None Include="Views\DeviceManagement\Index.cshtml" />
     <None Include="Views\DeviceManagement\_IndexBindProjectModalModal.cshtml" />
+    <None Include="Views\GroupManagement\Index.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Home\Privacy.cshtml" />
     <None Include="Views\ProjectManagement\AddProject.cshtml" />
@@ -598,7 +604,13 @@
     <None Include="wwwroot\bootstrap-fileinput\node_modules\opencollective-postinstall\LICENSE" />
     <None Include="wwwroot\bootstrap-fileinput\node_modules\opencollective-postinstall\README.md" />
     <None Include="wwwroot\echarts\echarts.min.js" />
+    <None Include="wwwroot\files\Device Information Import.xlsx" />
     <None Include="wwwroot\flatpickr\flatpickr.min.js" />
+    <None Include="wwwroot\js\CustomerManagement\add_customer.js" />
+    <None Include="wwwroot\js\CustomerManagement\bind_project.js" />
+    <None Include="wwwroot\js\DeviceManagement\bind_project.js" />
+    <None Include="wwwroot\js\DeviceManagement\import_device_info.js" />
+    <None Include="wwwroot\js\GroupManagement\bind_project.js" />
     <None Include="wwwroot\js\ProjectManagement\add_project.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
@@ -708,6 +720,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="EPPlus" Version="7.6.1" />
     <PackageReference Include="MySql.Data" Version="9.2.0" />
   </ItemGroup>
 

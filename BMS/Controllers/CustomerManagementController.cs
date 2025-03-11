@@ -15,6 +15,15 @@ namespace BMS.Controllers {
         public IActionResult Index() {
             List<CustomerListViewModel> customerListViewModel = new List<CustomerListViewModel>();
             var allCustomer = _customerManagementService.GetAllCustomerInfos();
+            foreach (var c in allCustomer) {
+                customerListViewModel.Add(new CustomerListViewModel() {
+                    CustomerId = c.Id,
+                    CustomerName = c.CustomerName,
+                    CreateTime = c.CreateTime,
+                    ProjectCount = c.ProjectInfos.Count,
+                    DeviceCount = c.ProjectInfos.Sum(s => s.DeviceCount)
+                });
+            }
             return View(customerListViewModel);
         }
 
@@ -40,6 +49,15 @@ namespace BMS.Controllers {
 
             } catch (Exception ex) {
                 return BadRequest("项目新建失败");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BindProjectToCustomer([FromBody] ProjectBindToCustomerModel model) {
+            if (_customerManagementService.BindProjectToCustomer(model.customerId, model.projectIds)) {
+                return Ok(new { message = "绑定成功" });
+            } else {
+                return BadRequest("绑定失败");
             }
         }
     }

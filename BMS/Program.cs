@@ -10,6 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IProjectManagementService, ProjectManagementService>();
 builder.Services.AddScoped<ICustomerManagementService, CustomerManagementService>();
 builder.Services.AddScoped<IDeviceManagementService, DeviceManagementService>();
+builder.Services.AddScoped<IGroupManagementService, GroupManagementService>();
 
 var app = builder.Build();
 

@@ -1,13 +1,15 @@
 ﻿$(document).ready(function () {
 
-    var projectRadioName = "projectRadio";
-
     $("#bindOK").click(function () {
         var sendData = {};
-        sendData.projectId = parseInt($("input[name='" + projectRadioName + "']:checked").val(), 10);
-        sendData.deviceId = parseInt($("#selectedDeviceId").val(), 10);
+        let projectIds = [];
+        $("#checkboxContainer input[type='checkbox']:checked").each(function () {
+            projectIds.push(parseInt($(this).val(), 10)); // 将值转换为整数
+        });
+        sendData.projectIds = projectIds;
+        sendData.customerId = parseInt($("#selectedCustomerId").val(), 10);
         $.ajax({
-            url: deviceBindToProjectUrl,
+            url: bindProjectToCustomerUrl,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(sendData),
@@ -15,7 +17,7 @@
                 if (response.message) {
                     // 在页面上显示返回的消息
                     alert(response.message);
-                    window.location.href = deviceListUrl;
+                    window.location.href = CustomerIndexUrl;
                 }
             },
             error: function (xhr, status, error) {
@@ -31,17 +33,17 @@
         var button = $(event.relatedTarget);
 
         // 获取 data-* 属性中的值
-        var deviceId = button.data('id');
-        $("#selectedDeviceId").val(deviceId);
-        var BMSSeriesNumber = button.data('name');
-        var requestUrl = getProjectListUrl + "?deviceId=" + deviceId;
+        var customerId = button.data('id');
+        $("#selectedCustomerId").val(customerId);
+        var customerName = button.data('name');
+        var requestUrl = getAllProjectUrl + "?customerId=" + customerId;
         // 发送 AJAX 请求获取详细信息
         $.ajax({
             url: requestUrl, // 使用动态生成的请求 URL
             method: 'GET', // 请求方式
             success: function (response) {
                 // 假设返回的数据结构是 { name: "电站名称", imageUrl: "图片链接" }
-                $('#bindModalBMSSeriesNumber').text(BMSSeriesNumber);
+                $('#bindModalCustomerName').text(customerName);
                 // 确保 response 是数组
                 if (Array.isArray(response)) {
                     let checkboxContainer = $("#checkboxContainer"); // 获取复选框容器
@@ -51,7 +53,7 @@
                         let isChecked = item.isSelected ? "checked" : "";
                         let checkboxHtml = `
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="${projectRadioName}" id="option${item.id}" value="${item.id}" ${isChecked}>
+                        <input class="form-check-input" type="checkbox" id="option${item.id}" value="${item.id}" ${isChecked}>
                         <label class="form-check-label" for="option${item.id}">${item.customerProjectName}</label>
                     </div>
                 `;

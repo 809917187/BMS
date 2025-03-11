@@ -11,6 +11,7 @@ namespace BMS.Models.ProjectManagement {
         public List<DeviceInfo> DeviceInfos { get; set; }
         public DateTime CreateTime { get; set; }
         public bool IsSelected { get; set; } = false;
+        public int DeviceCount { get; set; }
 
     }
 }

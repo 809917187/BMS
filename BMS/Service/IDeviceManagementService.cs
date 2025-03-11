@@ -4,7 +4,7 @@ using BMS.Models.ProjectManagement;
 namespace BMS.Service {
     public interface IDeviceManagementService {
         public List<DeviceInfo> GetAllDeviceInfo();
-        //public bool AddProjectInfo(ProjectInfo projectInfo);
+        public bool AddDeviceInfo(List<DeviceInfo> deviceInfos);
         public bool DeviceBindToProject(int deviceId, int projectId);
     }
 }

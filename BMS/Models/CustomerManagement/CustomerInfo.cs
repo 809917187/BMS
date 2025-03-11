@@ -5,7 +5,7 @@ namespace BMS.Models.CustomerManagement {
     public class CustomerInfo {
         public int Id { get; set; }
         public string CustomerName { get; set; }
-        public List<ProjectInfo> ProjectInfos { get; set; }
+        public List<ProjectInfo> ProjectInfos { get; set; } = new List<ProjectInfo>();
         
         public DateTime CreateTime { get; set; }
 

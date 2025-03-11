@@ -1,5 +1,4 @@
-﻿@model List<BMS.ViewModel.CustomerListViewModel>
-
+﻿@model List<BMS.ViewModel.GroupListViewModel>
 
 <div class="row">
     <div class="row pt-2">
@@ -7,8 +6,8 @@
             <p class="h5">客户列表 </p>
         </div>
         <div class="col-1 ">
-            <a asp-controller="CustomerManagement" asp-action="AddCustomerInfo" class="btn btn-primary d-inline-flex align-items-center">
-                新建客户
+            <a asp-controller="GroupManagement" asp-action="AddGroup" class="btn btn-primary d-inline-flex align-items-center">
+                新建分组
             </a>
         </div>
     </div>
@@ -23,7 +22,7 @@
             <thead class="thead-light">
                 <tr>
                     <th>序号</th>
-                    <th>客户名称</th>
+                    <th>分组名称</th>
                     <th>项目数</th>
                     <th>设备数</th>
                     <th>创建日期</th>
@@ -31,31 +30,31 @@
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Count; i++) {
+                 @for (int i = 0; i < Model.Count; i++) {
                     <tr>
-                        <td>@(i+1)</td>
-                        <td>@Model[i].CustomerName</td>
+                        <td>@(i + 1)</td>
+                        <td>@Model[i].GroupName</td>
                         <td>@Model[i].ProjectCount</td>
                         <td>@Model[i].DeviceCount</td>
                         <td>@Model[i].CreateTime.ToString("yyyy-MM-dd")</td>
                         <td class="gap-1">
-                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindProjectModal" data-name="@Model[i].CustomerName" data-id="@Model[i].CustomerId">绑定项目</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindProjectModal" data-name="@Model[i].GroupName" data-id="@Model[i].GroupId">绑定项目</button>
                         </td>
                     </tr>
-                }
+                } 
             </tbody>
         </table>
     </div>
 </div>
 
-@await Html.PartialAsync("~/Views/CustomerManagement/_IndexBindProjectModal.cshtml")
+@await Html.PartialAsync("~/Views/GroupManagement/_IndexBindProjectModal.cshtml")
 
 @section Scripts{
     <script>
-        var getAllProjectUrl = '@Url.Action("GetProjectListByCustomerId", "ProjectManagement")';
-        var bindProjectToCustomerUrl= '@Url.Action("BindProjectToCustomer", "CustomerManagement")';
-        var CustomerIndexUrl= '@Url.Action("Index", "CustomerManagement")';
+        var getAllProjectUrl = '@Url.Action("GetProjectListByGroupId", "ProjectManagement")';
+        var bindProjectToGroupUrl = '@Url.Action("BindProjectToGroup", "GroupManagement")';
+        var GroupIndexUrl = '@Url.Action("Index", "GroupManagement")';
     </script>
 
-    <script src="~/js/CustomerManagement/bind_project.js"></script>
+    <script src="~/js/GroupManagement/bind_project.js"></script>
 }

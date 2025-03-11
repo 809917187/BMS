@@ -11,6 +11,33 @@ namespace BMS.Service {
             _connectionString = configuration.GetConnectionString("bms");
         }
 
+        public bool AddDeviceInfo(List<DeviceInfo> deviceInfos) {
+            if (deviceInfos == null || deviceInfos.Count == 0)
+                return false; // 没有数据，直接返回
+
+            using (var conn = new MySqlConnection(_connectionString)) {
+                conn.Open();
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                using (var transaction = conn.BeginTransaction()) // 开启事务
+                {
+                    try {
+                        string sql = @"
+                        INSERT INTO device_info (battery_series_number, car_series_number, bms_series_number, activation_time)
+                        VALUES (@BatterySeriesNumber, @CarSeriesNumber, @BMSSeriesNumber,@ActivationTime);";
+
+                        conn.Execute(sql, deviceInfos, transaction);
+
+                        transaction.Commit(); // 提交事务
+                        return true;
+                    } catch (Exception ex) {
+                        transaction.Rollback(); // 发生异常时回滚
+                        Console.WriteLine("数据库插入失败: " + ex.Message);
+                        return false;
+                    }
+                }
+            }
+        }
+
         public bool DeviceBindToProject(int deviceId, int projectId) {
             using (MySqlConnection conn = new MySqlConnection(_connectionString)) {
                 conn.Open();
