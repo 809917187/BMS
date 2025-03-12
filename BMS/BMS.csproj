@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\GroupManagement\bind_project.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
   </ItemGroup>
 
@@ -47,7 +43,9 @@
     <None Include="Views\CustomerManagement\_IndexBindProjectModal.cshtml" />
     <None Include="Views\DeviceManagement\Index.cshtml" />
     <None Include="Views\DeviceManagement\_IndexBindProjectModalModal.cshtml" />
+    <None Include="Views\GroupManagement\AddGroup.cshtml" />
     <None Include="Views\GroupManagement\Index.cshtml" />
+    <None Include="Views\GroupManagement\_IndexBindProjectModal.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Home\Privacy.cshtml" />
     <None Include="Views\ProjectManagement\AddProject.cshtml" />
@@ -610,8 +608,12 @@
     <None Include="wwwroot\js\CustomerManagement\bind_project.js" />
     <None Include="wwwroot\js\DeviceManagement\bind_project.js" />
     <None Include="wwwroot\js\DeviceManagement\import_device_info.js" />
+    <None Include="wwwroot\js\GroupManagement\add_group.js" />
     <None Include="wwwroot\js\GroupManagement\bind_project.js" />
     <None Include="wwwroot\js\ProjectManagement\add_project.js" />
+    <None Include="wwwroot\js\Shared\addUser.js" />
+    <None Include="wwwroot\js\Shared\changePassword.js" />
+    <None Include="wwwroot\js\Shared\deleteUser.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />

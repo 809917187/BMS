@@ -1,3 +1,17 @@
 ﻿@{
-    Layout = "_Layout";
+    // 获取当前请求的 Controller 名称
+    string controllerName = ViewContext.RouteData.Values["controller"].ToString();
+
+    // 定义一个后台管理的 Controller 名称列表
+    string[] adminControllers = { "CustomerManagement", "DeviceManagement", "GroupManagement", "ProjectManagement","Access" };
+
+    // 如果 Controller 名称属于后台管理的范围，使用后台布局
+    if (adminControllers.Contains(controllerName))
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml"; // 后台管理界面布局
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_MainLayout.cshtml"; // 主站界面布局
+    }
 }

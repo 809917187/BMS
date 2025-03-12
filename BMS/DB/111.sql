@@ -270,7 +270,7 @@ CREATE TABLE `group_bind_project` (
   `group_id` int NOT NULL,
   `project_id` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +279,7 @@ CREATE TABLE `group_bind_project` (
 
 LOCK TABLES `group_bind_project` WRITE;
 /*!40000 ALTER TABLE `group_bind_project` DISABLE KEYS */;
-INSERT INTO `group_bind_project` VALUES (1,1,1),(2,1,2),(3,1,3),(4,2,4),(6,2,9),(10,5,1),(11,5,2),(12,5,3),(13,5,4),(14,5,5),(15,5,6),(16,5,7),(17,5,8),(18,5,9),(19,5,10);
+INSERT INTO `group_bind_project` VALUES (1,1,1),(2,1,2),(3,1,3),(10,5,1),(11,5,2),(12,5,3),(13,5,4),(14,5,5),(15,5,6),(16,5,7),(17,5,8),(18,5,9),(19,5,10),(22,2,1),(23,2,4),(24,2,9);
 /*!40000 ALTER TABLE `group_bind_project` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,6 +339,60 @@ LOCK TABLES `project_info` WRITE;
 INSERT INTO `project_info` VALUES (1,'111','AA','222222222','bbbbbbbbb','未分类','2025-02-17 20:10:50'),(2,'22222','cccc','33333','dd','未分类','2025-02-17 20:19:37'),(3,'333','BB','222222222','bbbbbbbbb','未分类','2025-02-17 20:24:24'),(4,'444','DD','222222222','bbbbbbbbb','未分类','2025-02-17 20:24:58'),(5,'555','RR','222222222','bbbbbbbbb','未分类','2025-02-17 20:25:52'),(6,'666','FF','22222222233','bbbbbbbbb','未分类','2025-02-17 20:26:34'),(7,'777','GG','222222222','bbbbbbbbb','未分类','2025-02-18 13:58:06'),(8,'001','编号零零一','MY001','我的编号零零一','未分类','2025-02-26 15:16:20'),(9,'002','编号零零二','MY002','我的编号零零二','未分类','2025-02-26 15:30:01'),(10,'20250310','AS','2025031020250310','ASAS','未分类','2025-03-10 16:10:51');
 /*!40000 ALTER TABLE `project_info` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `role` (
+  `role_code` int NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`role_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES (1,'管理员'),(2,'普通用户');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(320) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `phone_number` varchar(45) DEFAULT NULL,
+  `role_code` varchar(45) DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_delete` bit(1) DEFAULT b'0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (2,'admin','AQAAAAEAACcQAAAAEAUWVeUjzTndkWDb7FNmcdC9isiXK4VvBcGb671SVCEIPXXo+LeB6e0Wuruz9Yl7JA==','zw',NULL,'2','2024-11-25 07:17:09',_binary '\0'),(3,'809917187@qq.com','AQAAAAEAACcQAAAAEHPpLsmCIx+4CdCu9qStNFbNLoRkQvlaYalCfTOvvXneQ79o1MAby23gcSrsPco4yw==','zwzw','18688888888','1','2024-11-25 08:01:17',_binary '\0');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -349,4 +403,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-11 20:49:53
+-- Dump completed on 2025-03-12 17:26:42

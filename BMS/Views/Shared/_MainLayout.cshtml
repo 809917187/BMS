@@ -1,0 +1,99 @@
+﻿@using System.Security.Claims
+@{
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+    var name = User.FindFirst("Name")?.Value;
+    var RoleName = User.FindFirst("RoleName")?.Value;
+    var Role = User.FindFirst("Role")?.Value;
+}
+
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Dashboard</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="~/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="~/bootstrap_template/dashboard/dashboard.css" rel="stylesheet">
+    <link href="~/bootstrap_template/sidebars/sidebars.css" rel="stylesheet">
+    <link href="~/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/flatpickr/flatpickr.min.css" rel="stylesheet">
+    <link href="~/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
+    <link href="~/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
+    <style>
+        #sidebar a {
+            color: black;
+        }
+
+            #sidebar a:hover {
+                color: darkgray;
+            }
+    </style>
+
+</head>
+<body>
+
+
+
+    <div class="container-fluid d-flex flex-column" style="height: 100vh;">
+        <div class="row">
+            <header class="navbar sticky-top bg-dark flex-md-nowrap shadow" data-bs-theme="dark">
+                <div class="col-1 text-bg-dark text-center py-2">
+                    <strong class="text-white">BMS系统</strong>
+                </div>
+                <div class="dropdown " style="margin-right: 4rem;">
+                    <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="~/images/userPictures/yanzu.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                        <strong>@name</strong>
+                    </a>
+                    <ul class="dropdown-menu text-small shadow">
+                        @if (Role == "1") {
+                            <li><a class="dropdown-item" asp-controller="ProjectManagement" asp-action="Index">后台管理系统</a></li>
+                        }
+                        <li><a class="dropdown-item" asp-controller="Access" asp-action="Logout">退出登录</a></li>
+                    </ul>
+                </div>
+            </header>
+        </div>
+
+        <div class="row flex-grow-1 overflow-hidden">
+            <main class="col ms-sm-auto col-12 px-md-4 flex-grow-1 overflow-auto p-3">
+                @RenderBody()
+            </main>
+        </div>
+        <div class="row">
+            <footer class="sticky-footer mt-auto" style="background-color:#c6c7c8">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Master Zhang</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/echarts/echarts.min.js"></script>
+    <script src="~/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="~/flatpickr/flatpickr.min.js"></script>
+    <script src="~/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="~/bootstrap-fileinput/js/fileinput.min.js"></script>
+    <script src="~/bootstrap-fileinput/themes/bs5/theme.js"></script>
+    <script src="~/bootstrap_template/dashboard/dashboard.js"></script>
+    <script src="~/bootstrap_template/sidebars/sidebars.js"></script>
+    <script src="~/js/site.js"></script>
+
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
