@@ -1,47 +1,331 @@
-﻿<div class="row h-100">
-    <div class="col-2 h-100">
+﻿@model BMS.ViewModel.HomeViewModel
+
+
+<div class="row d-flex align-items-stretch pt-3">
+    <div class="col-2 border border-2 d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary">
 
         <div class="bd-example h-100">
             <nav>
                 <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="false">Home</button>
-                    <button class="nav-link " id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">Profile</button>
-                    <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="false">按项目</button>
+                    <button class="nav-link " id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">按客户</button>
+                    <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">按分组</button>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade active show p-2" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    @for (int i = 0; i < 50; i++) {
+
+                <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="d-flex justify-content-center p-2">
+                        <button class="btn btn-primary d-flex align-items-center justify-content-center w-100" id="refreshPageByProjectButton"
+                                type="button">
+                            UPDATE
+                            <i class="bi bi-arrow-repeat ms-1"></i>
+                        </button>
+                    </div>
+                    @for (int i = 0; i < @Model.projectInfos.Count; i++) {
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="checkbox1">
+                            <input class="form-check-input projectCheckbox" type="checkbox" value="@Model.projectInfos[i].Id" checked>
                             <label class="form-check-label" for="checkbox1">
-                                Option @i
+                                @Model.projectInfos[i].CustomerProjectName
                             </label>
                         </div>
                     }
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="selectAll" onclick="toggleCheckboxes(this)">
-                        <label class="form-check-label" for="selectAll">
-                            Select All
-                        </label>
-                    </div>
                 </div>
                 <div class="tab-pane fade " id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    @for (int i = 0; i < @Model.customerInfos.Count; i++) {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" checked>
+                            <label class="form-check-label" for="checkbox1">
+                                @Model.customerInfos[i].CustomerName
+                            </label>
+                        </div>
+                    }
                 </div>
                 <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    @for (int i = 0; i < @Model.groupInfos.Count; i++) {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" checked>
+                            <label class="form-check-label" for="checkbox1">
+                                @Model.groupInfos[i].GroupName
+                            </label>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
 
+    </div>
+    <div class="col-10">
+        <div class="row d-flex align-items-stretch pt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        项目总览
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>项目总数</h6>
+                                        <h6 id="project_total_count">XXX</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>设备总数</h6>
+                                        <h6 id="device_total_count">XXX</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>充电设备</h6>
+                                        <h6>XXX</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>激活设备</h6>
+                                        <h6>XXX</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>在线设备</h6>
+                                        <h6>XXX</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>报警数</h6>
+                                        <h6>XXX</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row d-flex align-items-stretch pt-3">
+            <div class="col-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>项目统计</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 order-md-last">
+                                <ul class="list-group mb-3">
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">总装车能量：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">总运行时长：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">总充电能量：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">总行驶里程：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">最大运行时长：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">最大充电电量：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">最大行驶里程：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between lh-base">
+                                        <div>
+                                            <h6 class="my-0">最大循环次数：</h6>
+                                        </div>
+                                        <span class="text-body-secondary">XXXX</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-4">
+                                <h6>24小时状态曲线</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12" id="chart_24_hours_status" style="height:400px;border-right: 2px solid #ccc;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
 
+        <div class="row d-flex align-items-stretch pt-3">
+            <div class="col-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>工作状态</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 order-md-last">
+                                <div class="col-12" id="chart_working_status" style="height:400px;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>SOC</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 order-md-last">
+                                <div class="col-12" id="chart_soc" style="height:400px;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>告警状态</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 order-md-last">
+                                <div class="col-12" id="chart_alarm_status" style="height:400px;">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row d-flex align-items-stretch pt-3">
+            <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>统计分析</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 order-md-last">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row d-flex align-items-stretch pt-3">
+            <div class="col-12">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>列表预览</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 order-md-last">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
-    <div class="col-10 bg-dark"></div>
 </div>
 
 
 @section Scripts{
+    <script>
+        var GetProjectOverviewByProject = '@Url.Action("GetProjectOverviewByProject", "Home")';
+
+    </script>
+<script src="~/js/Home/init_24hour_status_chart.js"></script>
+<script src="~/js/Home/init_soc_chart.js"></script>
+<script src="~/js/Home/init_working_status_chart.js"></script>
+<script src="~/js/Home/init_alarm_status_chart.js"></script>
+<script src="~/js/Home/refresh_page_by_project.js"></script>
 <script>
     // 选择所有复选框
     function toggleCheckboxes(selectAllCheckbox) {
@@ -49,6 +333,28 @@
       checkboxes.forEach(function (checkbox) {
         checkbox.checked = selectAllCheckbox.checked;
       });
+    }
+
+    const checkboxes = document.querySelectorAll('.filter');
+    const items = document.querySelectorAll('.item');
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', filterItems);
+    });
+
+    function filterItems() {
+        const selectedOptions = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
+        items.forEach(item => {
+            const itemClasses = item.classList;
+            if (selectedOptions.some(option => itemClasses.contains(option))) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
     }
 </script>
 }
