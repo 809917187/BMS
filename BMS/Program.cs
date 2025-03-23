@@ -1,8 +1,11 @@
+using BMS.MQTT;
 using BMS.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string connectionString = builder.Configuration.GetConnectionString("bms");
+MQTTHelper.SetConnectionString(connectionString);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -20,6 +23,7 @@ builder.Services.AddScoped<ICustomerManagementService, CustomerManagementService
 builder.Services.AddScoped<IDeviceManagementService, DeviceManagementService>();
 builder.Services.AddScoped<IGroupManagementService, GroupManagementService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddHostedService<TimedBackgroundService>();
 
 var app = builder.Build();
 

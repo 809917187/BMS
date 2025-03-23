@@ -44,8 +44,13 @@
                         <td>@Model[i].BMSSeriesNumber</td>
                         <td>@Model[i].BatterySeriesNumber</td>
                         <td>@Model[i].CarSeriesNumber</td>
-                        <td>@Model[i].projectInfo.CustomerProjectNumber</td>
-                        <td>@Model[i].projectInfo.CustomerProjectName</td>
+                        @if (@Model[i].projectInfo == null) {
+                            <td></td>
+                            <td></td>
+                        } else {
+                            <td>@Model[i].projectInfo.CustomerProjectNumber</td>
+                            <td>@Model[i].projectInfo.CustomerProjectName</td>
+                        }
                         <td>@Model[i].ActivationTime.ToString("yyyy-MM-dd")</td>
                         <td>
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindProjectModal" data-name="@Model[i].BMSSeriesNumber" data-id="@Model[i].Id">绑定项目</button>

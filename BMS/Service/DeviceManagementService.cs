@@ -73,12 +73,45 @@ namespace BMS.Service {
                     query,
                     (device, project) => {
                         device.projectInfo = project; // 绑定 projectInfo
+                        if (project != null) {
+                            device.projectInfo.Id = project.ProjectId; // 将 project_id 赋给 device.projectInfo.Id
+                        }
                         return device;
                     },
                     splitOn: "project_id" // 告诉 Dapper "project_id" 之后是 ProjectInfo 的数据
                 ).ToList();
                 return infos;
             }
+        }
+
+        public List<BatteryClusterInfo> GetLatestBatteryClusterInfos() {
+            List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
+
+            try {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                // 创建 MySQL 连接
+                using (MySqlConnection connection = new MySqlConnection(_connectionString)) {
+                    connection.Open();
+
+                    // 定义 SQL 查询
+                    string sql = @"
+                        WITH LatestData AS (
+                            SELECT *,
+                                   ROW_NUMBER() OVER (PARTITION BY device_id ORDER BY upload_time DESC) AS rn
+                            FROM battery_cluster_info
+                        )
+                        SELECT * 
+                        FROM LatestData
+                        WHERE rn = 1;
+                    ";
+
+                    ret = connection.Query<BatteryClusterInfo>(sql).AsList();
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return ret;
         }
     }
 }
