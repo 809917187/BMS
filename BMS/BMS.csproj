@@ -625,8 +625,7 @@
     <None Include="wwwroot\js\GroupManagement\bind_project.js" />
     <None Include="wwwroot\js\Home\init_24hour_status_chart.js" />
     <None Include="wwwroot\js\Home\init_alarm_status_chart.js" />
-    <None Include="wwwroot\js\Home\init_soc_chart.js" />
-    <None Include="wwwroot\js\Home\init_working_status_chart.js" />
+    <None Include="wwwroot\js\Home\init_charge_discharge_chart.js" />
     <None Include="wwwroot\js\Home\refresh_page_by_project.js" />
     <None Include="wwwroot\js\ProjectManagement\add_project.js" />
     <None Include="wwwroot\js\Shared\addUser.js" />

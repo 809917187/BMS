@@ -29,8 +29,8 @@
                 <tr>
                     <th>序号</th>
                     <th>BMS编号</th>
-                    <th>电池编号</th>
-                    <th>车辆编号</th>
+                    <th>SN</th>
+                    @* <th>车辆编号</th> *@
                     <th>项目编号</th>
                     <th>项目名称</th>
                     <th>激活时间</th>
@@ -43,7 +43,7 @@
                         <td>@(i+1)</td>
                         <td>@Model[i].BMSSeriesNumber</td>
                         <td>@Model[i].BatterySeriesNumber</td>
-                        <td>@Model[i].CarSeriesNumber</td>
+                        @* <td>@Model[i].CarSeriesNumber</td> *@
                         @if (@Model[i].projectInfo == null) {
                             <td></td>
                             <td></td>

@@ -54,14 +54,12 @@ namespace BMS.Controllers {
                         var devices = new List<string>(); // 存储设备信息
                         for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // 从第二行开始读取
                         {
-                            if (DateTime.TryParseExact(worksheet.Cells[row, 5].Text, Utility.TimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result)) {
-                                DeviceInfo deviceInfo = new DeviceInfo();
-                                deviceInfo.BMSSeriesNumber = worksheet.Cells[row, 2].Text;
-                                deviceInfo.BatterySeriesNumber = worksheet.Cells[row, 3].Text;
-                                deviceInfo.CarSeriesNumber = worksheet.Cells[row, 4].Text;
-                                deviceInfo.ActivationTime = result;
-                                deviceInfos.Add(deviceInfo);
-                            }
+							DeviceInfo deviceInfo = new DeviceInfo();
+							deviceInfo.BMSSeriesNumber = worksheet.Cells[row, 2].Text;
+							deviceInfo.BatterySeriesNumber = worksheet.Cells[row, 3].Text;
+							deviceInfo.CarSeriesNumber = ""/*worksheet.Cells[row, 4].Text*/;
+							deviceInfo.ActivationTime = DateTime.Now;//后续修改为从底层第一次传数据的时间
+							deviceInfos.Add(deviceInfo);
 
                         }
 
