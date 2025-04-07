@@ -1,0 +1,42 @@
+﻿@using System.Reflection;
+@using System.ComponentModel.DataAnnotations;
+@model List<BMS.Models.Device.BatteryClusterInfo>
+@{
+    var props = typeof(BMS.Models.Device.BatteryClusterInfo)
+        .GetProperties()
+        .Where(p => {
+            var displayAttr = p.GetCustomAttribute<DisplayAttribute>();
+            return displayAttr == null || displayAttr.GetAutoGenerateField() != false;
+        })
+        .ToList();
+}
+
+
+<table id="table_devices" class="table table-responsive"
+       data-toggle="table"
+       data-search="true"
+       data-pagination="true">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            @foreach (var prop in props) {
+                var displayAttr = prop.GetCustomAttribute<DisplayAttribute>();
+                var displayName = displayAttr?.Name ?? prop.Name;  // 有中文就显示中文，否则显示属性名
+
+                <th>@displayName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count; i++) {
+            var item = Model[i];
+            <tr>
+                <td>@(i + 1)</td>
+                @foreach (var prop in props) {
+                    var value = prop.GetValue(item);
+                    <td>@(value ?? "")</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

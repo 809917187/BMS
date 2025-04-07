@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Shared\_Layout.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Views\Shared\_Layout.cshtml.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
   </ItemGroup>
 
@@ -58,12 +50,14 @@
     <None Include="Views\GroupManagement\AddGroup.cshtml" />
     <None Include="Views\GroupManagement\Index.cshtml" />
     <None Include="Views\GroupManagement\_IndexBindProjectModal.cshtml" />
+    <None Include="Views\Home\DeviceDetails.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Home\Privacy.cshtml" />
     <None Include="Views\ProjectManagement\AddProject.cshtml" />
     <None Include="Views\ProjectManagement\Index.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\_AdminLayout.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Shared\_MainLayout.cshtml" />
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="Views\_ViewImports.cshtml" />
@@ -625,6 +619,7 @@
     <None Include="wwwroot\js\GroupManagement\bind_project.js" />
     <None Include="wwwroot\js\Home\init_24hour_status_chart.js" />
     <None Include="wwwroot\js\Home\init_alarm_status_chart.js" />
+    <None Include="wwwroot\js\Home\init_baidu_map.js" />
     <None Include="wwwroot\js\Home\init_charge_discharge_chart.js" />
     <None Include="wwwroot\js\Home\refresh_page_by_project.js" />
     <None Include="wwwroot\js\ProjectManagement\add_project.js" />

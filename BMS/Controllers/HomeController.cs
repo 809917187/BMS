@@ -1,5 +1,7 @@
 ﻿using BMS.Models;
 using BMS.Models.Device;
+using BMS.Models.Home;
+using BMS.Models.ProjectManagement;
 using BMS.Service;
 using BMS.ViewModel;
 using BMS.ViewModel.Home;
@@ -49,31 +51,62 @@ namespace BMS.Controllers {
             return View();
         }
 
+        public IActionResult DeviceDetails(string sn) {
+            return View(_deviceManagementService.GetBatteryClusterInfosBySn(sn));
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpPost]
-        public IActionResult GetProjectOverviewByProject([FromBody] List<int> selectedProjectIds) {
-            var projectInfos = _projectManagementService.GetAllProjectInfo().FindAll(s => selectedProjectIds.Contains(s.Id)).ToList();
+        private List<ProjectInfo> GetProjectInfosByTypeAndIds(SelectedInfo selectedInfo) {
+            List<ProjectInfo> projectInfos = new List<ProjectInfo>();
 
-            PorjectOverviewViewModel ret = new PorjectOverviewViewModel();
-            ret.PorjectCount = projectInfos.Count();
-            ret.TotalDeviceCount = projectInfos.Sum(s => s.DeviceInfos.Count);
+            if (selectedInfo == null) {
+                return projectInfos;
+            }
+            List<int> projectIds = new List<int>();
+            if (selectedInfo.type == 1) {
+                projectIds = selectedInfo.selectedIds.ToList();
+            } else if (selectedInfo.type == 2) {
+                projectIds = _projectManagementService.GetBindedProjectIdsByCustomerIds(selectedInfo.selectedIds);
+            } else if (selectedInfo.type == 3) {
+                projectIds = _projectManagementService.GetBindedProjectIdsByGroupIds(selectedInfo.selectedIds);
+            }
+            projectInfos = _projectManagementService.GetAllProjectInfo().FindAll(s => projectIds.Contains(s.Id)).ToList();
+            return projectInfos;
+        }
 
-            return Ok(ret); // 返回 200 状态码 + JSON 数据
+        private List<DeviceInfo> GetAllDeviceByProject(List<ProjectInfo> projectInfos) {
+            return projectInfos.SelectMany(s => s.DeviceInfos).GroupBy(s => s.BatterySeriesNumber).Select(g => g.First()).ToList();
+        }
+
+        private List<DeviceInfo> GetAllDeviceByTypeAndIds(SelectedInfo selectedInfo) {
+            var projectInfos = this.GetProjectInfosByTypeAndIds(selectedInfo);
+            return this.GetAllDeviceByProject(projectInfos);
         }
 
         [HttpPost]
-        public IActionResult GetWorkingStatusChartByProject([FromBody] List<int> selectedProjectIds) {
+        public IActionResult GetProjectOverview([FromBody] SelectedInfo selectedInfo) {
+            List<ProjectInfo> projectInfos = this.GetProjectInfosByTypeAndIds(selectedInfo);
+            List<DeviceInfo> deviceInfos = this.GetAllDeviceByProject(projectInfos);
+
+            PorjectOverviewViewModel ret = new PorjectOverviewViewModel();
+            ret.PorjectCount = projectInfos.Count();
+            ret.TotalDeviceCount = deviceInfos.Count;
+
+            return Ok(ret);
+        }
+
+        [HttpPost]
+        public IActionResult GetWorkingStatusChart([FromBody] SelectedInfo selectedInfo) {
             var _deviceInfos = _cache.Get("DeviceInfosCache") as List<DeviceInfo>;
             var _batteryClusterInfos = _cache.Get("BatteryClusterCache") as List<BatteryClusterInfo>;
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-
-            var allDeviceSNs = _deviceInfos.Where(s => selectedProjectIds.Contains(s.projectInfo.Id)).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
                 {
@@ -86,15 +119,29 @@ namespace BMS.Controllers {
 
         }
 
+
         [HttpPost]
-        public IActionResult GetSOCStatusChartByProject([FromBody] List<int> selectedProjectIds) {
+        public IActionResult GetDeviceList([FromBody] SelectedInfo selectedInfo) {
             var _deviceInfos = _cache.Get("DeviceInfosCache") as List<DeviceInfo>;
             var _batteryClusterInfos = _cache.Get("BatteryClusterCache") as List<BatteryClusterInfo>;
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
+            var data = _deviceInfos.Where(s => allDeviceSNs.Contains(s.BatterySeriesNumber));
 
-            var allDeviceSNs = _deviceInfos.Where(s => selectedProjectIds.Contains(s.projectInfo.Id)).Select(s => s.BatterySeriesNumber);
+            return Ok(data);
+
+        }
+
+        [HttpPost]
+        public IActionResult GetSOCStatusChart([FromBody] SelectedInfo selectedInfo) {
+            var _deviceInfos = _cache.Get("DeviceInfosCache") as List<DeviceInfo>;
+            var _batteryClusterInfos = _cache.Get("BatteryClusterCache") as List<BatteryClusterInfo>;
+            if (_deviceInfos == null || _batteryClusterInfos == null) {
+                return BadRequest(string.Empty);
+            }
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
             {
@@ -107,14 +154,13 @@ namespace BMS.Controllers {
         }
 
         [HttpPost]
-        public IActionResult GetAlarmStatusChartByProject([FromBody] List<int> selectedProjectIds) {
+        public IActionResult GetAlarmStatusChart([FromBody] SelectedInfo selectedInfo) {
             var _deviceInfos = _cache.Get("DeviceInfosCache") as List<DeviceInfo>;
             var _batteryClusterInfos = _cache.Get("BatteryClusterCache") as List<BatteryClusterInfo>;
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-
-            var allDeviceSNs = _deviceInfos.Where(s => selectedProjectIds.Contains(s.projectInfo.Id)).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
             {
@@ -128,19 +174,17 @@ namespace BMS.Controllers {
 
 
         [HttpPost]
-        public IActionResult GetLast24HourStatusChartByProject([FromBody] List<int> selectedProjectIds) {
+        public IActionResult GetLast24HourStatusChart([FromBody] SelectedInfo selectedInfo) {
             var _deviceInfos = _cache.Get("DeviceInfosCache") as List<DeviceInfo>;
             var _batteryClusterInfos = _cache.Get("BatteryClusterCache") as List<BatteryClusterInfo>;
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-
-            var allDeviceSNs = _deviceInfos.Where(s => selectedProjectIds.Contains(s.projectInfo.Id)).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var now = DateTime.Now;
 
-            var data = Enumerable.Range(0, 24).Select(i => new
-            {
+            var data = Enumerable.Range(0, 24).Select(i => new {
                 hour = now.AddHours(-i).ToString("HH时"),
                 charging = Random.Shared.Next(5, 15),
                 discharging = Random.Shared.Next(3, 10),

@@ -103,20 +103,35 @@ namespace BMS.Service {
             return ret;
         }
 
-        public List<int> GetBindedProjectIdsByCustomerId(int customerId) {
+        /*public List<int> GetBindedProjectIdsByCustomerId(int customerId) {
             List<int> ret = new List<int>();
             using (var connection = new MySqlConnection(_connectionString)) {
                 string sql = "SELECT project_id FROM bms.customer_bind_project where customer_id=@customerId";
                 ret = connection.Query<int>(sql, new { customerId = customerId }).ToList();
             }
             return ret;
+        }*/
+        public List<int> GetBindedProjectIdsByCustomerIds(List<int> customerIds) {
+            using (var connection = new MySqlConnection(_connectionString)) {
+                string sql = "SELECT project_id FROM bms.customer_bind_project WHERE customer_id IN @customerIds";
+                return connection.Query<int>(sql, new { customerIds }).ToList();
+            }
         }
 
-        public List<int> GetBindedProjectIdsByGroupId(int groupId) {
+
+        /*public List<int> GetBindedProjectIdsByGroupId(int groupId) {
             List<int> ret = new List<int>();
             using (var connection = new MySqlConnection(_connectionString)) {
                 string sql = "SELECT project_id FROM bms.group_bind_project where group_id=@groupId";
                 ret = connection.Query<int>(sql, new { groupId = groupId }).ToList();
+            }
+            return ret;
+        }*/
+        public List<int> GetBindedProjectIdsByGroupIds(List<int> groupIds) {
+            List<int> ret = new List<int>();
+            using (var connection = new MySqlConnection(_connectionString)) {
+                string sql = "SELECT project_id FROM bms.group_bind_project where group_id IN @groupIds";
+                ret = connection.Query<int>(sql, new { groupIds = groupIds }).ToList();
             }
             return ret;
         }

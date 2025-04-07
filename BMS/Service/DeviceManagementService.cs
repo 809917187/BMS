@@ -84,6 +84,31 @@ namespace BMS.Service {
             }
         }
 
+
+        public List<BatteryClusterInfo> GetBatteryClusterInfosBySn(string sn) {
+            List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
+
+            try {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                // 创建 MySQL 连接
+                using (MySqlConnection connection = new MySqlConnection(_connectionString)) {
+                    connection.Open();
+
+                    // 定义 SQL 查询
+                    string sql = @"
+                        SELECT * 
+                        FROM battery_cluster_info
+                        WHERE sn = @sn;
+                    ";
+
+                    ret = connection.Query<BatteryClusterInfo>(sql, new { sn = sn }).AsList();
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return ret;
+        }
         public List<BatteryClusterInfo> GetLatestBatteryClusterInfos() {
             List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 

@@ -57,7 +57,7 @@ namespace BMS.Controllers {
         public IActionResult GetProjectListByCustomerId(int customerId) {
             var allProjectInfos = _projectManagementService.GetAllProjectInfo();
 
-            var bindProjectIds = _projectManagementService.GetBindedProjectIdsByCustomerId(customerId);
+            var bindProjectIds = _projectManagementService.GetBindedProjectIdsByCustomerIds(new List<int>() { customerId });
 
             if (bindProjectIds != null && bindProjectIds.Count > 0) {
 
@@ -72,7 +72,7 @@ namespace BMS.Controllers {
         public IActionResult GetProjectListByGroupId(int groupId) {
             var allProjectInfos = _projectManagementService.GetAllProjectInfo();
 
-            var bindProjectIds = _projectManagementService.GetBindedProjectIdsByGroupId(groupId);
+            var bindProjectIds = _projectManagementService.GetBindedProjectIdsByGroupIds(new List<int>() { groupId });
 
             if (bindProjectIds != null && bindProjectIds.Count > 0) {
 
@@ -82,6 +82,6 @@ namespace BMS.Controllers {
             }
             return Ok(allProjectInfos);
         }
-        
+
     }
 }
