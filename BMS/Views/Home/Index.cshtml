@@ -311,11 +311,11 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th data-field="index">序号</th>
-                                            <th data-field="bmsSeriesNumber">BMS编号</th>
-                                            <th data-field="batterySeriesNumber" data-formatter="linkFormatter">SN</th>
+                                            <th data-field="sn">SN</th>
                                             <th data-field="projectInfo.customerProjectNumber">项目编号</th>
                                             <th data-field="projectInfo.customerProjectName">项目名称</th>
                                             <th data-field="projectInfo.activationTime">激活时间</th>
+                                            <th data-field="sn" data-formatter="buttonFormatter">查看历史</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -342,9 +342,9 @@
 
 </script>
 <script src="~/js/Home/refresh_page.js"></script>
-	@*<script src="~/js/Home/init_baidu_map.js"></script>*@
+@*<script src="~/js/Home/init_baidu_map.js"></script>*@
 <script src="~/js/Home/init_charge_discharge_chart.js"></script>
-	@*<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=TvAOEF4TlFxLzTzVTkzWrEMQ7PcUilkd"></script>*@
+@*<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=TvAOEF4TlFxLzTzVTkzWrEMQ7PcUilkd"></script>*@
 <script>
     // 选择所有复选框
     function toggleCheckboxes(selectAllCheckbox) {

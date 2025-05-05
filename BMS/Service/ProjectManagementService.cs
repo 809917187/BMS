@@ -43,12 +43,12 @@ namespace BMS.Service {
                                         p.customer_project_name AS CustomerProjectName, p.my_project_number AS MyProjectNumber,
                                         p.my_project_name AS MyProjectName, p.project_type AS ProjectType,
                                         p.create_time AS ProjectCreateTime,
-                                        d.Id AS DeviceId,d.car_series_number AS CarSeriesNumber,d.battery_series_number AS BatterySeriesNumber,d.bms_series_number AS BMSSeriesNumber,
+                                        d.sn AS BatterySeriesNumber,
                                         d.activation_time AS ActivationTime 
                                     FROM 
                                         bms.project_info p 
                                     LEFT JOIN device_info d ON p.id = d.project_id
-                                    GROUP BY p.id,d.Id;
+                                    GROUP BY p.id,d.sn;
                                 ";
                 using (MySqlDataAdapter sda = new MySqlDataAdapter(sql, connection)) {
                     DataTable dt = new DataTable();
@@ -73,16 +73,13 @@ namespace BMS.Service {
 
                         // 创建 ProjectInfo 对象
                         var device = new DeviceInfo {
-                            Id = dr["DeviceId"] != DBNull.Value ? Convert.ToInt32(dr["DeviceId"]) : 0,  // 使用默认值0处理null
-                            CarSeriesNumber = dr["CarSeriesNumber"] != DBNull.Value ? (string)dr["CarSeriesNumber"] : string.Empty,  // 如果为null，则使用空字符串
-                            BatterySeriesNumber = dr["BatterySeriesNumber"] != DBNull.Value ? (string)dr["BatterySeriesNumber"] : string.Empty,  // 如果为null，则使用空字符串
-                            BMSSeriesNumber = dr["BMSSeriesNumber"] != DBNull.Value ? (string)dr["BMSSeriesNumber"] : string.Empty,  // 如果为null，则使用空字符串
+                            Sn = dr["BatterySeriesNumber"] != DBNull.Value ? (string)dr["BatterySeriesNumber"] : string.Empty,  // 如果为null，则使用空字符串
                             ActivationTime = dr["ActivationTime"] != DBNull.Value ? (DateTime)dr["ActivationTime"] : DateTime.MinValue,  // 如果为null，则使用默认日期
                         };
 
 
                         // 如果项目存在，加入该客户的项目列表
-                        if (device.Id != 0) {
+                        if (device.Sn != string.Empty) {
                             existingProject.DeviceInfos.Add(device);
                         }
                     }
@@ -94,11 +91,11 @@ namespace BMS.Service {
 
         }
 
-        public ProjectInfo GetBindedProjectByDeviceId(int DeviceId) {
+        public ProjectInfo GetBindedProjectByDeviceSN(string sn) {
             ProjectInfo? ret = null;
             using (var connection = new MySqlConnection(_connectionString)) {
-                string sql = "SELECT * FROM bms.project_info where id=(SELECT project_id FROM device_info Where id = @id)";
-                ret = connection.Query<ProjectInfo>(sql, new { id = DeviceId }).FirstOrDefault();
+                string sql = "SELECT * FROM bms.project_info where id=(SELECT project_id FROM device_info Where sn = @sn)";
+                ret = connection.Query<ProjectInfo>(sql, new { sn = sn }).FirstOrDefault();
             }
             return ret;
         }

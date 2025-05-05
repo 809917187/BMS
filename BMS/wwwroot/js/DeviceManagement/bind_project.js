@@ -5,7 +5,7 @@
     $("#bindOK").click(function () {
         var sendData = {};
         sendData.projectId = parseInt($("input[name='" + projectRadioName + "']:checked").val(), 10);
-        sendData.deviceId = parseInt($("#selectedDeviceId").val(), 10);
+        sendData.sn = $('#bindModalBMSSeriesNumber').text();
         $.ajax({
             url: deviceBindToProjectUrl,
             type: 'POST',
@@ -31,17 +31,16 @@
         var button = $(event.relatedTarget);
 
         // 获取 data-* 属性中的值
-        var deviceId = button.data('id');
-        $("#selectedDeviceId").val(deviceId);
-        var BMSSeriesNumber = button.data('name');
-        var requestUrl = getProjectListUrl + "?deviceId=" + deviceId;
+        var sn = button.data('sn');
+
+        var requestUrl = getProjectListUrl + "?sn=" + sn;
         // 发送 AJAX 请求获取详细信息
         $.ajax({
             url: requestUrl, // 使用动态生成的请求 URL
             method: 'GET', // 请求方式
             success: function (response) {
                 // 假设返回的数据结构是 { name: "电站名称", imageUrl: "图片链接" }
-                $('#bindModalBMSSeriesNumber').text(BMSSeriesNumber);
+                $('#bindModalBMSSeriesNumber').text(sn);
                 // 确保 response 是数组
                 if (Array.isArray(response)) {
                     let checkboxContainer = $("#checkboxContainer"); // 获取复选框容器

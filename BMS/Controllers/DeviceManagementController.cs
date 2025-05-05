@@ -20,7 +20,7 @@ namespace BMS.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> DeviceBindToProject([FromBody] DeviceBindToProjectModel model) {
-            if (_deviceManagementService.DeviceBindToProject(model.deviceId, model.projectId)) {
+            if (_deviceManagementService.DeviceBindToProject(model.sn, model.projectId)) {
                 return Ok(new { message = "绑定成功" });
             } else {
                 return BadRequest("绑定失败");
@@ -55,9 +55,7 @@ namespace BMS.Controllers {
                         for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // 从第二行开始读取
                         {
 							DeviceInfo deviceInfo = new DeviceInfo();
-							deviceInfo.BMSSeriesNumber = worksheet.Cells[row, 2].Text;
-							deviceInfo.BatterySeriesNumber = worksheet.Cells[row, 3].Text;
-							deviceInfo.CarSeriesNumber = ""/*worksheet.Cells[row, 4].Text*/;
+							deviceInfo.Sn = worksheet.Cells[row, 1].Text;
 							deviceInfo.ActivationTime = DateTime.Now;//后续修改为从底层第一次传数据的时间
 							deviceInfos.Add(deviceInfo);
 

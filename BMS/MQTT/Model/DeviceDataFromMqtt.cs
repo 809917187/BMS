@@ -4,7 +4,9 @@
         public string devName { get; set; } // 设备名称
         public string devId { get; set; }   // 设备ID
         public string sn { get; set; }      // 序列号
-        public Dictionary<string, double> data { get; set; } // 数据字典
+        public int cur { get; set; }
+        public int total { get; set; }
+        public Dictionary<string, float> data { get; set; } // 数据字典
     }
 
     public class DeviceDataFromMqtt {

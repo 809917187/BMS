@@ -52,7 +52,14 @@ namespace BMS.Controllers {
         }
 
         public IActionResult DeviceDetails(string sn) {
-            return View(_deviceManagementService.GetBatteryClusterInfosBySn(sn));
+            var mode = _deviceManagementService.GetBatteryClusterInfosBySn(sn);
+            return View(mode);
+        }
+
+
+        public IActionResult RealTimeStatus(string sn) {
+            var model = _deviceManagementService.GetLatestBatteryClusterInfosBySn(sn);
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -79,7 +86,7 @@ namespace BMS.Controllers {
         }
 
         private List<DeviceInfo> GetAllDeviceByProject(List<ProjectInfo> projectInfos) {
-            return projectInfos.SelectMany(s => s.DeviceInfos).GroupBy(s => s.BatterySeriesNumber).Select(g => g.First()).ToList();
+            return projectInfos.SelectMany(s => s.DeviceInfos).GroupBy(s => s.Sn).Select(g => g.First()).ToList();
         }
 
         private List<DeviceInfo> GetAllDeviceByTypeAndIds(SelectedInfo selectedInfo) {
@@ -106,7 +113,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
                 {
@@ -127,8 +134,8 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
-            var data = _deviceInfos.Where(s => allDeviceSNs.Contains(s.BatterySeriesNumber));
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
+            var data = _deviceInfos.Where(s => allDeviceSNs.Contains(s.Sn));
 
             return Ok(data);
 
@@ -141,7 +148,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
             {
@@ -160,7 +167,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
             {
@@ -180,7 +187,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.BatterySeriesNumber);
+            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var now = DateTime.Now;
 

@@ -45,7 +45,7 @@ namespace BMS.Service {
                         p.customer_project_name AS CustomerProjectName, p.my_project_number AS MyProjectNumber,
                         p.my_project_name AS MyProjectName, p.project_type AS ProjectType, 
                         p.create_time AS ProjectCreateTime,
-                        COUNT(d.id) AS DeviceCount
+                        COUNT(d.sn) AS DeviceCount
                     FROM bms.group_info gi
                     LEFT JOIN group_bind_project gbp ON gi.id = gbp.group_id
                     LEFT JOIN project_info p ON gbp.project_id = p.id 

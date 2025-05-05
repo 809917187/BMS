@@ -41,10 +41,10 @@ namespace BMS.Controllers {
         }
 
         [HttpGet]
-        public IActionResult GetProjectListByDeviceId(int deviceId) {
+        public IActionResult GetProjectListByDeviceSN(string sn) {
             var allProjectInfos = _projectManagementService.GetAllProjectInfo();
 
-            var bindProject = _projectManagementService.GetBindedProjectByDeviceId(deviceId);
+            var bindProject = _projectManagementService.GetBindedProjectByDeviceSN(sn);
 
             if (bindProject != null) {
                 allProjectInfos.Find(s => s.Id == bindProject.Id).IsSelected = true;

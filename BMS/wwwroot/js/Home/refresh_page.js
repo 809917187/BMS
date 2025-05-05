@@ -54,10 +54,24 @@ function refreshDeviceListTable(selectedProjectIds, type) {
     });
 }
 
-function linkFormatter(value, row, index) {
+function buttonFormatter(value, row, index) {
     if (!value) return "-";
-    return `<a href="/Home/DeviceDetails?sn=${value}" target="_blank">${value}</a>`;
+    return `<button class="btn btn-sm btn-primary" onclick="openDeviceDetail('${value}')">运行历史</button>
+            <button class="btn btn-sm btn-primary" onclick="openRealTimeStatus('${value}')">实时状态</button>
+            `;
 }
+
+function openDeviceDetail(sn) {
+    const url = `/Home/DeviceDetails?sn=${encodeURIComponent(sn)}`;
+    window.open(url, '_blank');
+}
+
+function openRealTimeStatus(sn) {
+    const url = `/Home/RealTimeStatus?sn=${encodeURIComponent(sn)}`;
+    window.open(url, '_blank');
+}
+
+
 
 
 function refresh24HoursStatusChart(selectedProjectIds, type) {

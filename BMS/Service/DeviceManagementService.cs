@@ -1,14 +1,19 @@
-﻿using BMS.Models.CustomerManagement;
+﻿using BMS.AttributeTag;
+using BMS.Models.CustomerManagement;
 using BMS.Models.Device;
 using BMS.Models.ProjectManagement;
+using ClickHouse.Client.ADO;
 using Dapper;
 using MySql.Data.MySqlClient;
+using System.Reflection;
 
 namespace BMS.Service {
     public class DeviceManagementService : IDeviceManagementService {
         private string _connectionString;
+        private string _connectionStringClickHouse;
         public DeviceManagementService(IConfiguration configuration) {
             _connectionString = configuration.GetConnectionString("bms");
+            _connectionStringClickHouse = configuration.GetConnectionString("bms_clickhouse");
         }
 
         public bool AddDeviceInfo(List<DeviceInfo> deviceInfos) {
@@ -18,34 +23,32 @@ namespace BMS.Service {
             using (var conn = new MySqlConnection(_connectionString)) {
                 conn.Open();
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-                using (var transaction = conn.BeginTransaction()) // 开启事务
-                {
-                    try {
-                        string sql = @"
-                        INSERT INTO device_info (battery_series_number, car_series_number, bms_series_number, activation_time)
-                        VALUES (@BatterySeriesNumber, @CarSeriesNumber, @BMSSeriesNumber,@ActivationTime);";
 
-                        conn.Execute(sql, deviceInfos, transaction);
+                try {
+                    string sql = @"
+                        INSERT INTO device_info (sn, activation_time)
+                        VALUES (@BatterySeriesNumber,@ActivationTime);";
 
-                        transaction.Commit(); // 提交事务
-                        return true;
-                    } catch (Exception ex) {
-                        transaction.Rollback(); // 发生异常时回滚
-                        Console.WriteLine("数据库插入失败: " + ex.Message);
-                        return false;
-                    }
+                    conn.Execute(sql, deviceInfos);
+
+
+                    return true;
+                } catch (Exception ex) {
+
+                    Console.WriteLine("数据库插入失败: " + ex.Message);
+                    return false;
                 }
             }
         }
 
-        public bool DeviceBindToProject(int deviceId, int projectId) {
+        public bool DeviceBindToProject(string sn, int projectId) {
             using (MySqlConnection conn = new MySqlConnection(_connectionString)) {
                 conn.Open();
                 try {
-                    string sql = "UPDATE device_info SET project_id = @projectId WHERE id=@deviceId";
+                    string sql = "UPDATE device_info SET project_id = @projectId WHERE sn=@sn";
                     // 使用 MySqlCommand 执行更新操作
                     using (var cmd = new MySqlCommand(sql, conn)) {
-                        cmd.Parameters.AddWithValue("@deviceId", deviceId);
+                        cmd.Parameters.AddWithValue("@sn", sn);
                         cmd.Parameters.AddWithValue("@projectId", projectId);
 
                         // 执行更新
@@ -63,8 +66,8 @@ namespace BMS.Service {
             using (var connection = new MySqlConnection(_connectionString)) {
                 connection.Open();
                 string query = "SELECT " +
-                    "device_info.id,device_info.battery_series_number, device_info.car_series_number," +
-                    "device_info.bms_series_number,device_info.activation_time," +
+                    "device_info.sn," +
+                    "device_info.activation_time," +
                     "project_info.id as project_id,project_info.customer_project_number,project_info.customer_project_name," +
                     "project_info.my_project_number,project_info.my_project_name,project_info.project_type,project_info.create_time " +
                     "FROM bms.device_info " +
@@ -89,19 +92,39 @@ namespace BMS.Service {
             List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 
             try {
-                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-                // 创建 MySQL 连接
-                using (MySqlConnection connection = new MySqlConnection(_connectionString)) {
+                using (ClickHouseConnection connection = new ClickHouseConnection(_connectionStringClickHouse)) {
                     connection.Open();
 
                     // 定义 SQL 查询
-                    string sql = @"
-                        SELECT * 
-                        FROM battery_cluster_info
-                        WHERE sn = @sn;
-                    ";
+                    using (var command = connection.CreateCommand()) {
+                        command.CommandText = @"
+                            SELECT sn, upload_time,device_type,device_name ,device_id,data 
+                            FROM battery_cluster_information 
+                            WHERE sn = @sn 
+                            ORDER BY upload_time DESC ";
+                        var param = command.CreateParameter();
+                        param.ParameterName = "sn";
+                        param.Value = sn;
+                        command.Parameters.Add(param);
 
-                    ret = connection.Query<BatteryClusterInfo>(sql, new { sn = sn }).AsList();
+                        using (var reader = command.ExecuteReader()) {
+                            List<OrignialBatteryClusterData> info = new List<OrignialBatteryClusterData>();
+                            while (reader.Read()) {
+                                info.Add(new OrignialBatteryClusterData {
+                                    Sn = sn,
+                                    UploadTime = reader.GetDateTime(reader.GetOrdinal("upload_time")),
+                                    DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
+                                    DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
+                                    DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
+                                    PointData = (float[])reader.GetValue(reader.GetOrdinal("data"))
+                                });
+                            }
+
+                            return this.PraseBatteryClusterInfo(info);
+                        }
+
+                    }
+
                 }
             } catch (Exception ex) {
                 Console.WriteLine($"Error: {ex.Message}");
@@ -109,28 +132,132 @@ namespace BMS.Service {
 
             return ret;
         }
+
+        private List<BatteryClusterInfo> PraseBatteryClusterInfo(List<OrignialBatteryClusterData> orignialBatteryClusterDatas) {
+            List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
+
+            foreach (OrignialBatteryClusterData orignialBatteryData in orignialBatteryClusterDatas) {
+                BatteryClusterInfo batteryClusterInfo = new BatteryClusterInfo();
+                SetModelPropertiesByMap(batteryClusterInfo, orignialBatteryData.PointData);
+                batteryClusterInfo.Sn = orignialBatteryData.Sn;
+                batteryClusterInfo.UploadTime = orignialBatteryData.UploadTime;
+                batteryClusterInfo.DeviceType = orignialBatteryData.DeviceType;
+                batteryClusterInfo.DeviceName = orignialBatteryData.DeviceName;
+                batteryClusterInfo.DeviceId = orignialBatteryData.DeviceId;
+                ret.Add(batteryClusterInfo);
+            }
+
+
+            return ret;
+        }
+
+        public void SetModelPropertiesByMap<T>(T model, float[] values) {
+            var props = typeof(T).GetProperties();
+
+            foreach (var prop in props) {
+                if (Attribute.IsDefined(prop, typeof(NotPointDataAttribute)))
+                    continue;
+
+                if (Attribute.IsDefined(prop, typeof(PointRangeAttribute))) {
+                    var attrRange = prop.GetCustomAttribute<PointRangeAttribute>();
+
+                    prop.SetValue(model, values.Skip(attrRange.StartIndex).Take(attrRange.EndIndex - attrRange.StartIndex + 1).ToArray());
+                }
+
+                var attr = prop.GetCustomAttribute<PointIndexAttribute>();
+                if (attr != null && attr.Index < values.Length) {
+                    var value = values[attr.Index];
+                    if (value != null && prop.CanWrite) {
+                        object converted = Convert.ChangeType(value, prop.PropertyType);
+                        prop.SetValue(model, converted);
+                    }
+                }
+            }
+        }
+
+
+        public BatteryClusterInfo GetLatestBatteryClusterInfosBySn(string sn) {
+            List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
+
+            try {
+                using (ClickHouseConnection connection = new ClickHouseConnection(_connectionStringClickHouse)) {
+                    connection.Open();
+
+                    // 定义 SQL 查询
+                    using (var command = connection.CreateCommand()) {
+                        command.CommandText = @"
+                            SELECT TOP(1) sn, upload_time,device_type,device_name ,device_id,data 
+                            FROM battery_cluster_information 
+                            WHERE sn = @sn 
+                            ORDER BY upload_time DESC ";
+                        var param = command.CreateParameter();
+                        param.ParameterName = "sn";
+                        param.Value = sn;
+                        command.Parameters.Add(param);
+
+                        using (var reader = command.ExecuteReader()) {
+                            List<OrignialBatteryClusterData> info = new List<OrignialBatteryClusterData>();
+                            while (reader.Read()) {
+                                info.Add(new OrignialBatteryClusterData {
+                                    Sn = sn,
+                                    UploadTime = reader.GetDateTime(reader.GetOrdinal("upload_time")),
+                                    DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
+                                    DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
+                                    DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
+                                    PointData = (float[])reader.GetValue(reader.GetOrdinal("data"))
+                                });
+                            }
+
+                            return this.PraseBatteryClusterInfo(info)[0];
+                        }
+
+                    }
+
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return ret[0];
+        }
         public List<BatteryClusterInfo> GetLatestBatteryClusterInfos() {
             List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 
             try {
-                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-                // 创建 MySQL 连接
-                using (MySqlConnection connection = new MySqlConnection(_connectionString)) {
+                using (ClickHouseConnection connection = new ClickHouseConnection(_connectionStringClickHouse)) {
                     connection.Open();
 
                     // 定义 SQL 查询
-                    string sql = @"
-                        WITH LatestData AS (
-                            SELECT *,
-                                   ROW_NUMBER() OVER (PARTITION BY device_id ORDER BY upload_time DESC) AS rn
-                            FROM battery_cluster_info
-                        )
-                        SELECT * 
-                        FROM LatestData
-                        WHERE rn = 1;
-                    ";
+                    using (var command = connection.CreateCommand()) {
+                        command.CommandText = @"
+                            SELECT
+                                sn,
+                                argMax(device_type, upload_time) AS device_type,
+                                argMax(device_name, upload_time) AS device_name,
+                                argMax(device_id, upload_time) AS device_id,
+                                argMax(data, upload_time) AS data,
+                                max(upload_time) AS latest_upload_time
+                            FROM battery_cluster_information
+                            GROUP BY sn";
 
-                    ret = connection.Query<BatteryClusterInfo>(sql).AsList();
+                        using (var reader = command.ExecuteReader()) {
+                            List<OrignialBatteryClusterData> info = new List<OrignialBatteryClusterData>();
+                            while (reader.Read()) {
+                                info.Add(new OrignialBatteryClusterData {
+                                    Sn = reader.GetString(reader.GetOrdinal("sn")),
+                                    UploadTime = reader.GetDateTime(reader.GetOrdinal("latest_upload_time")),
+                                    DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
+                                    DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
+                                    DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
+                                    PointData = (float[])reader.GetValue(reader.GetOrdinal("data"))
+                                });
+                            }
+
+                            return this.PraseBatteryClusterInfo(info);
+                        }
+
+                    }
+
                 }
             } catch (Exception ex) {
                 Console.WriteLine($"Error: {ex.Message}");

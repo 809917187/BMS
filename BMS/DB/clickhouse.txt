@@ -1,0 +1,20 @@
+﻿CREATE TABLE bms.battery_cluster_information
+(
+
+    `sn` String,
+
+    `upload_time` DateTime DEFAULT now(),
+
+    `device_type` String,
+
+    `device_name` String,
+
+    `device_id` String,
+
+    `data` Array(Float32)
+)
+ENGINE = MergeTree
+PARTITION BY toYYYYMM(upload_time)
+ORDER BY (sn,
+ upload_time)
+SETTINGS index_granularity = 8192;

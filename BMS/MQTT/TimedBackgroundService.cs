@@ -1,10 +1,17 @@
 ﻿namespace BMS.MQTT {
     public class TimedBackgroundService : BackgroundService {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-            while (!stoppingToken.IsCancellationRequested) {
-                //MQTTHelper.SaveMqttPeriodDataToDB();
-                await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
-            }
+
+            /*//while (!stoppingToken.IsCancellationRequested) {
+            MQTTHelperClickHouse.SaveMqttPeriodDataToDB(1);
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            MQTTHelperClickHouse.SaveMqttPeriodDataToDB(2);
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            MQTTHelperClickHouse.SaveMqttPeriodDataToDB(3);
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            MQTTHelperClickHouse.SaveMqttPeriodDataToDB(4);
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);*/
+            //}
         }
 
         private Task DoWorkAsync() {

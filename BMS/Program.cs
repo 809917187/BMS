@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 string connectionString = builder.Configuration.GetConnectionString("bms");
-MQTTHelper.SetConnectionString(connectionString);
+string connectionString_clickhouse = builder.Configuration.GetConnectionString("bms_clickhouse");
+//MQTTHelper.SetConnectionString(connectionString);
+MQTTHelperClickHouse.SetConnectionString(connectionString_clickhouse);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -28,9 +28,7 @@
             <thead class="thead-light">
                 <tr>
                     <th>序号</th>
-                    <th>BMS编号</th>
                     <th>SN</th>
-                    @* <th>车辆编号</th> *@
                     <th>项目编号</th>
                     <th>项目名称</th>
                     <th>激活时间</th>
@@ -41,9 +39,7 @@
                 @for (int i = 0; i < Model.Count; i++) {
                     <tr>
                         <td>@(i+1)</td>
-                        <td>@Model[i].BMSSeriesNumber</td>
-                        <td>@Model[i].BatterySeriesNumber</td>
-                        @* <td>@Model[i].CarSeriesNumber</td> *@
+                        <td>@Model[i].Sn</td>
                         @if (@Model[i].projectInfo == null) {
                             <td></td>
                             <td></td>
@@ -53,7 +49,7 @@
                         }
                         <td>@Model[i].ActivationTime.ToString("yyyy-MM-dd")</td>
                         <td>
-                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindProjectModal" data-name="@Model[i].BMSSeriesNumber" data-id="@Model[i].Id">绑定项目</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bindProjectModal" data-sn="@Model[i].Sn">绑定项目</button>
                         </td>
                     </tr>
                 }
@@ -65,7 +61,7 @@
 
 @section Scripts{
 <script>
-    var getProjectListUrl = '@Url.Action("GetProjectListByDeviceId", "ProjectManagement")';
+    var getProjectListUrl = '@Url.Action("GetProjectListByDeviceSN", "ProjectManagement")';
     var deviceBindToProjectUrl = '@Url.Action("DeviceBindToProject", "DeviceManagement")';
     var deviceListUrl = '@Url.Action("Index", "DeviceManagement")';
     var ImportDeviceInfoUrl = '@Url.Action("ImportDeviceInfo", "DeviceManagement")';

@@ -1,0 +1,218 @@
+﻿@model BMS.Models.Device.BatteryClusterInfo
+
+<div class="row d-flex align-items-stretch pt-3">
+    <div class="col-2 d-flex">
+        <div class="card  w-100">
+            <div class="card-header bg-primary">
+                总电压
+            </div>
+            <div class="card-body">
+                <h1>@Model.TotalVoltage.ToString("f1") V</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-2 d-flex">
+        <div class="card  w-100">
+            <div class="card-header bg-success">
+                总电流
+            </div>
+            <div class="card-body">
+                <h1>@Model.TotalCurrent.ToString("f1") A</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col d-flex">
+        <div class="w-100">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">SOC</h6>
+                    <span class="text-muted">@Model.Soc.ToString("f1") %</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">SOH</h6>
+                    <span class="text-muted">@Model.Soh.ToString("f1") %</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">平均电压</h6>
+                    <span class="text-muted">@Model.CellAverageVoltage.ToString("f1") V</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">平均温度</h6>
+                    <span class="text-muted">@Model.CellAverageTemperature.ToString("f1") ℃</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">单体最高温度</h6>
+                    <span class="text-muted">@Model.HighestCellTemperature.ToString("f1") ℃</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col d-flex">
+        <div class="w-100">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">正极绝缘阻值</h6>
+                    <span class="text-muted">@Model.PositiveInsulationResistance.ToString("f1") Ω</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">负极绝缘阻值</h6>
+                    <span class="text-muted">@Model.NegativeInsulationResistance.ToString("f1") Ω</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">在线电池串数</h6>
+                    <span class="text-muted">@Model.OnlineBatteries</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">在线电芯温感数</h6>
+                    <span class="text-muted">@Model.OnlineTemperatureSensors</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">极柱温度</h6>
+                    <span class="text-muted">-%</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div class="row d-flex align-items-stretch pt-3">
+    <div class="col d-flex">
+        <div class="w-100">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">最高单体电压</h6>
+                    <span class="text-muted">@Model.BatteryVoltage1ToBattery420.Max().ToString("f1") V</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">电池单体代号</h6>
+                    <span class="text-muted">@Array.IndexOf(Model.BatteryVoltage1ToBattery420, Model.BatteryVoltage1ToBattery420.Max())</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col d-flex">
+        <div class="w-100">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">最低单体电压</h6>
+                    <span class="text-muted">@Model.BatteryVoltage1ToBattery420.Min().ToString("f1") V</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">电池单体代号</h6>
+                    <span class="text-muted">@Array.IndexOf(Model.BatteryVoltage1ToBattery420, Model.BatteryVoltage1ToBattery420.Min())</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col d-flex">
+        <div class="w-100">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">最高电芯温度</h6>
+                    <span class="text-muted">@Model.BatteryTemperature1ToBattery200.Max().ToString("f1") ℃</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">探针序号</h6>
+                    <span class="text-muted">@Array.IndexOf(Model.BatteryTemperature1ToBattery200, Model.BatteryTemperature1ToBattery200.Max())</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col d-flex">
+        <div class="w-100">
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">最低电芯温度</h6>
+                    <span class="text-muted">@Model.BatteryTemperature1ToBattery200.Min().ToString("f1") ℃</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <h6 class="my-0">探针序号</h6>
+                    <span class="text-muted">@Array.IndexOf(Model.BatteryTemperature1ToBattery200, Model.BatteryTemperature1ToBattery200.Min())</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row d-flex align-items-stretch pt-3">
+    <div class="row d-flex align-items-stretch pt-3">
+        <div class="col-12 d-flex">
+            <div class="card  w-100">
+                <div class="card-header">
+                    继电器状态
+                </div>
+                <div class="card-body">
+                    <table id="table_relay_status" class="table table-responsive"
+                           data-toggle="table"
+                           data-search="false"
+                           data-pagination="true">
+                        <thead class="thead-light">
+                            <tr>
+                                <th data-field="index">名称</th>
+                                <th data-field="bmsSeriesNumber">型号</th>
+                                <th data-field="batterySeriesNumber">高边开关</th>
+                                <th data-field="projectInfo.customerProjectNumber">高压检测</th>
+                                <th data-field="projectInfo.customerProjectName">状态</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row d-flex align-items-stretch pt-3">
+    <div class="row d-flex align-items-stretch pt-3">
+        <div class="col-12 d-flex">
+            <div class="card  w-100">
+                <div class="card-header">
+                    实时报警
+                </div>
+                <div class="card-body">
+                    <table id="table_relay_status" class="table table-responsive"
+                           data-toggle="table"
+                           data-search="false"
+                           data-pagination="true">
+                        <thead class="thead-light">
+                            <tr>
+                                <th data-field="index">序号</th>
+                                <th data-field="bmsSeriesNumber">发生时间</th>
+                                <th data-field="batterySeriesNumber">故障类型</th>
+                                <th data-field="projectInfo.customerProjectNumber">报警等级</th>
+                                <th data-field="projectInfo.customerProjectName">持续时长</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row d-flex align-items-stretch pt-3">
+    <div class="row d-flex align-items-stretch pt-3">
+        <div class="col-12 d-flex">
+            <div class="card  w-100">
+                <div class="card-header">
+                    电池单体
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12" id="chart_battery_voltage" style="height:400px;" data-aaa="@Html.Raw(Json.Serialize(Model.BatteryVoltage1ToBattery420))">
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-12" id="chart_cell_temperture" style="height:400px;" data-aaa="@Html.Raw(Json.Serialize(Model.BatteryTemperature1ToBattery200))">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/Home/real_time_status.js"></script>
+}
