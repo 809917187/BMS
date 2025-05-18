@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\Home\init_24hour_status_chart.js" />
+    <Content Remove="wwwroot\js\Home\init_alarm_status_chart.js" />
+    <Content Remove="wwwroot\js\Home\init_charge_discharge_chart.js" />
+    <Content Remove="wwwroot\js\Home\refresh_page_by_project.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
   </ItemGroup>
 
@@ -618,12 +625,8 @@
     <None Include="wwwroot\js\DeviceManagement\import_device_info.js" />
     <None Include="wwwroot\js\GroupManagement\add_group.js" />
     <None Include="wwwroot\js\GroupManagement\bind_project.js" />
-    <None Include="wwwroot\js\Home\init_24hour_status_chart.js" />
-    <None Include="wwwroot\js\Home\init_alarm_status_chart.js" />
     <None Include="wwwroot\js\Home\init_baidu_map.js" />
-    <None Include="wwwroot\js\Home\init_charge_discharge_chart.js" />
     <None Include="wwwroot\js\Home\refresh_page.js" />
-    <None Include="wwwroot\js\Home\refresh_page_by_project.js" />
     <None Include="wwwroot\js\ProjectManagement\add_project.js" />
     <None Include="wwwroot\js\Shared\addUser.js" />
     <None Include="wwwroot\js\Shared\changePassword.js" />
@@ -738,6 +741,7 @@
     <PackageReference Include="ClickHouse.Client" Version="7.2.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="EPPlus" Version="7.6.1" />
+    <PackageReference Include="MQTTnet" Version="4.3.3.952" />
     <PackageReference Include="MySql.Data" Version="9.2.0" />
   </ItemGroup>
 

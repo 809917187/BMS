@@ -12,23 +12,24 @@ namespace BMS.MQTT {
         private static Dictionary<string, DataFromMqtt> SnTimestramp2DataFromMqtt = new Dictionary<string, DataFromMqtt>();
         private static Dictionary<string, int> SnTimestramp2count = new Dictionary<string, int>();
 
-        public static bool SaveMqttPeriodDataToDB(int index) {
+        public static bool SaveMqttPeriodDataToDB(string json) {
             try {
-                string json = MQTTHelperClickHouse.GetPeriodData(index);
                 var rootObject = JsonSerializer.Deserialize<DeviceDataFromMqtt>(json);
                 if (rootObject != null) {
 
                     foreach (DataFromMqtt dataFromMqtt in rootObject.devData.FindAll(s => s.devType == "4")) {
+                        Console.WriteLine(dataFromMqtt.data.Keys.ToList()[0]);
                         string key = dataFromMqtt.sn + rootObject.timeStamp;
                         if (!SnTimestramp2DataFromMqtt.ContainsKey(key)) {
                             SnTimestramp2DataFromMqtt[key] = dataFromMqtt;
                             SnTimestramp2count[key] = 1;
                         } else {
-                            SnTimestramp2DataFromMqtt[key].data = SnTimestramp2DataFromMqtt[key].data.Concat(dataFromMqtt.data).ToDictionary(kv => kv.Key, kv => kv.Value); ;
+                            SnTimestramp2DataFromMqtt[key].data = SnTimestramp2DataFromMqtt[key].data.Concat(dataFromMqtt.data).ToDictionary(kv => kv.Key, kv => kv.Value);
                             SnTimestramp2count[key] = SnTimestramp2count[key] + 1;
                         }
-                        if (SnTimestramp2count[key] == dataFromMqtt.total) {
-                            DateTime UploadTime = DateTimeOffset.FromUnixTimeSeconds(rootObject.timeStamp).LocalDateTime;
+                        if (SnTimestramp2count[key] == dataFromMqtt.totalPack) {
+                            //DateTime UploadTime = DateTimeOffset.FromUnixTimeSeconds(rootObject.timeStamp).LocalDateTime;
+                            DateTime UploadTime = DateTime.Now;
                             MQTTHelperClickHouse.SaveBatteryClusterInfoAsync(SnTimestramp2DataFromMqtt[key], UploadTime);
                         }
 
@@ -43,6 +44,7 @@ namespace BMS.MQTT {
 
             return true;
         }
+
 
         public static async Task<bool> SaveBatteryClusterInfoAsync(DataFromMqtt info, DateTime UploadTime) {
             if (info == null) {

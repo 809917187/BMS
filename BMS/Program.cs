@@ -25,7 +25,7 @@ builder.Services.AddScoped<ICustomerManagementService, CustomerManagementService
 builder.Services.AddScoped<IDeviceManagementService, DeviceManagementService>();
 builder.Services.AddScoped<IGroupManagementService, GroupManagementService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddHostedService<TimedBackgroundService>();
+builder.Services.AddHostedService<MqttSubscribeService>();
 
 var app = builder.Build();
 

@@ -26,6 +26,15 @@ namespace BMS.Controllers {
             _cache = cache;
         }
 
+
+        /*
+         GetProjectInfosByTypeAndIds查到选中的project
+        根据project从GetAllDeviceByProject查到Device的信息
+
+         
+         
+         */
+
         private void SetCacheData() {
             // 如果缓存不存在，从数据库查询
             List<BatteryClusterInfo> batteryClusterInfos = _deviceManagementService.GetLatestBatteryClusterInfos();
@@ -89,9 +98,9 @@ namespace BMS.Controllers {
             return projectInfos.SelectMany(s => s.DeviceInfos).GroupBy(s => s.Sn).Select(g => g.First()).ToList();
         }
 
-        private List<DeviceInfo> GetAllDeviceByTypeAndIds(SelectedInfo selectedInfo) {
+        private List<String> GetAllDeviceSNByTypeAndIds(SelectedInfo selectedInfo) {
             var projectInfos = this.GetProjectInfosByTypeAndIds(selectedInfo);
-            return this.GetAllDeviceByProject(projectInfos);
+            return this.GetAllDeviceByProject(projectInfos).Select(S => S.Sn).ToList();
         }
 
         [HttpPost]
@@ -113,14 +122,14 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
+            var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
                 {
-                    new { status = "在线", count = latestData.Count(d => d.DeviceOnline ) },
                     new { status = "离线", count = latestData.Count(d => !d.DeviceOnline ) },
-                    new { status = "充电", count = latestData.Count(d => d.DeviceEnable) },
-                    new { status = "空闲", count = latestData.Count(d => !d.DeviceEnable) }
+                    new { status = "待机", count = latestData.Count(d => d.BcuOperatingStatus==1) },
+                    new { status = "充电", count = latestData.Count(d => d.BcuOperatingStatus==2) },
+                    new { status = "放电", count = latestData.Count(d => d.BcuOperatingStatus==3) }
                 };
             return Ok(result);
 
@@ -134,7 +143,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
+            var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var data = _deviceInfos.Where(s => allDeviceSNs.Contains(s.Sn));
 
             return Ok(data);
@@ -148,13 +157,13 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
+            var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
             {
-                new { status = ">80%", count = latestData.Count(d => Convert.ToDouble(d.Soc)>0.8 ) },
-                new { status = "20%~80%", count = latestData.Count(d => Convert.ToDouble(d.Soc)>=0.2&& Convert.ToDouble(d.Soc)<=0.8) },
-                new { status = "<20%", count = latestData.Count(d => Convert.ToDouble(d.Soc)<0.2) }
+                new { status = ">80%", count = latestData.Count(d => Convert.ToDouble(d.Soc)>80 ) },
+                new { status = "20%~80%", count = latestData.Count(d => Convert.ToDouble(d.Soc)>=20&& Convert.ToDouble(d.Soc)<=80) },
+                new { status = "<20%", count = latestData.Count(d => Convert.ToDouble(d.Soc)<20) }
             };
             return Ok(result);
 
@@ -167,7 +176,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
+            var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var result = new List<object>
             {
@@ -187,7 +196,7 @@ namespace BMS.Controllers {
             if (_deviceInfos == null || _batteryClusterInfos == null) {
                 return BadRequest(string.Empty);
             }
-            var allDeviceSNs = this.GetAllDeviceByTypeAndIds(selectedInfo).Select(s => s.Sn);
+            var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
             var now = DateTime.Now;
 

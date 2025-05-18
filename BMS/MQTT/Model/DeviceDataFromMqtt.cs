@@ -4,8 +4,8 @@
         public string devName { get; set; } // 设备名称
         public string devId { get; set; }   // 设备ID
         public string sn { get; set; }      // 序列号
-        public int cur { get; set; }
-        public int total { get; set; }
+        public int currentPack { get; set; }
+        public int totalPack { get; set; }
         public Dictionary<string, float> data { get; set; } // 数据字典
     }
 

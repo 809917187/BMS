@@ -27,7 +27,7 @@ namespace BMS.Service {
                 try {
                     string sql = @"
                         INSERT INTO device_info (sn, activation_time)
-                        VALUES (@BatterySeriesNumber,@ActivationTime);";
+                        VALUES (@Sn,@ActivationTime);";
 
                     conn.Execute(sql, deviceInfos);
 
@@ -144,6 +144,10 @@ namespace BMS.Service {
                 batteryClusterInfo.DeviceType = orignialBatteryData.DeviceType;
                 batteryClusterInfo.DeviceName = orignialBatteryData.DeviceName;
                 batteryClusterInfo.DeviceId = orignialBatteryData.DeviceId;
+
+                //解析
+                batteryClusterInfo.BcuOperatingStatus =Convert.ToInt32( batteryClusterInfo.BcuOperatingStatus) & 0x0F;
+
                 ret.Add(batteryClusterInfo);
             }
 
