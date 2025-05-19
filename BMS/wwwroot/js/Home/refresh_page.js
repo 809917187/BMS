@@ -27,6 +27,7 @@ function refreshPage(type) {
         return;
     }
 
+    
     refreshProjectOverview(selectedProject, type);
     refreshWorkingStatusChart(selectedProject, type);
     refreshSOCStatusChart(selectedProject, type);
@@ -47,6 +48,7 @@ function refreshDeviceListTable(selectedProjectIds, type) {
                 item.index = i + 1;
             });
             $("#table_devices").bootstrapTable("load", data); // 加载数据
+            $("#active_device_count").text(data.length);
         },
         error: function (xhr, status, error) {
             console.error("获取设备数据失败:", error);
@@ -161,6 +163,7 @@ function refreshAlarmStatusChart(selectedProjectIds, type) {
                 ]
             };
             myChart.setOption(option);
+            $("#total_alarm_count").text(response[0].count + response[1].count + response[2].count)
         },
         error: function (xhr, status, error) {
             console.error("获取Alarm数据失败:", error);
@@ -273,6 +276,9 @@ function refreshWorkingStatusChart(selectedProjectIds, type) {
                 ]
             };
             myChart.setOption(option);
+            $("#charging_device_count").text(response[2].count);
+            $("#online_device_count").text(response[1].count + response[2].count + response[3].count);
+            
         },
         error: function (xhr, status, error) {
             console.error("获取工作状态数据失败:", error);
@@ -297,6 +303,8 @@ function refreshProjectOverview(selectedProjectIds, type) {
         success: function (data) {
             $("#project_total_count").text(data.porjectCount);
             $("#device_total_count").text(data.totalDeviceCount);
+            $("#cumulative_charge_energy").text(data.cumulativeChargeEnergy);
+            $("#cumulative_discharge_energy").text(data.cumulativeDischargeEnergy);
 
             // 在这里更新页面上的内容，例如填充表格或更新 DOM
         },

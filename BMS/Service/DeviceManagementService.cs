@@ -116,7 +116,7 @@ namespace BMS.Service {
                                     DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
                                     DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
                                     DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
-                                    PointData = (float[])reader.GetValue(reader.GetOrdinal("data"))
+                                    PointData = (int[])reader.GetValue(reader.GetOrdinal("data"))
                                 });
                             }
 
@@ -148,6 +148,7 @@ namespace BMS.Service {
                 //解析
                 batteryClusterInfo.BcuOperatingStatus =Convert.ToInt32( batteryClusterInfo.BcuOperatingStatus) & 0x0F;
 
+
                 ret.Add(batteryClusterInfo);
             }
 
@@ -155,7 +156,7 @@ namespace BMS.Service {
             return ret;
         }
 
-        public void SetModelPropertiesByMap<T>(T model, float[] values) {
+        public void SetModelPropertiesByMap<T>(T model, int[] values) {
             var props = typeof(T).GetProperties();
 
             foreach (var prop in props) {
@@ -208,7 +209,7 @@ namespace BMS.Service {
                                     DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
                                     DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
                                     DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
-                                    PointData = (float[])reader.GetValue(reader.GetOrdinal("data"))
+                                    PointData = (int[])reader.GetValue(reader.GetOrdinal("data"))
                                 });
                             }
 
@@ -253,7 +254,7 @@ namespace BMS.Service {
                                     DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
                                     DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
                                     DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
-                                    PointData = (float[])reader.GetValue(reader.GetOrdinal("data"))
+                                    PointData = (int[])reader.GetValue(reader.GetOrdinal("data"))
                                 });
                             }
 

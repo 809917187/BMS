@@ -28,8 +28,8 @@ namespace BMS.MQTT {
                             SnTimestramp2count[key] = SnTimestramp2count[key] + 1;
                         }
                         if (SnTimestramp2count[key] == dataFromMqtt.totalPack) {
-                            //DateTime UploadTime = DateTimeOffset.FromUnixTimeSeconds(rootObject.timeStamp).LocalDateTime;
-                            DateTime UploadTime = DateTime.Now;
+                            DateTime UploadTime = DateTimeOffset.FromUnixTimeSeconds(rootObject.timeStamp).LocalDateTime;
+                            //DateTime UploadTime = DateTime.Now;
                             MQTTHelperClickHouse.SaveBatteryClusterInfoAsync(SnTimestramp2DataFromMqtt[key], UploadTime);
                         }
 
