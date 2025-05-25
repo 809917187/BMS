@@ -1,4 +1,19 @@
-﻿@model BMS.Models.Device.BatteryClusterInfo
+﻿@using System.Reflection;
+@using System.ComponentModel.DataAnnotations;
+@model BMS.Models.Device.BatteryClusterInfo
+
+@{
+    var alarmProps = typeof(BMS.Models.Device.BatteryClusterInfo)
+                                                .GetProperties()
+                                                .Where(p => p.GetCustomAttribute<BMS.AttributeTag.AlarmAttribute>() != null)//筛选出Alarm
+                                                .Select(p => new {
+                                                    AlarmIndex = p.GetCustomAttribute<BMS.AttributeTag.AlarmAttribute>().Index,
+                                                    DisplayName = p.GetCustomAttribute<DisplayAttribute>().Name,
+                                                    AlarmValue = p.GetValue(Model)  // 获取属性在当前 Model 中的值
+                                        })
+                                                .Where(x => Convert.ToInt32(x.AlarmValue) == 1)
+                                                .ToList();
+}
 
 <div class="row d-flex align-items-stretch pt-3">
     <div class="col-2 d-flex">
@@ -34,7 +49,7 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <h6 class="my-0">平均电压</h6>
-                    <span class="text-muted">@Model.CellAverageVoltage.ToString("f1") V</span>
+                    <span class="text-muted">@Model.CellAverageVoltage.ToString("f1") mV</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <h6 class="my-0">平均温度</h6>
@@ -82,7 +97,7 @@
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <h6 class="my-0">最高单体电压</h6>
-                    <span class="text-muted">@Model.BatteryVoltage1ToBattery420.Max().ToString("f1") V</span>
+                    <span class="text-muted">@Model.BatteryVoltage1ToBattery420.Max().ToString("f1") mV</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <h6 class="my-0">电池单体代号</h6>
@@ -96,7 +111,7 @@
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <h6 class="my-0">最低单体电压</h6>
-                    <span class="text-muted">@Model.BatteryVoltage1ToBattery420.Min().ToString("f1") V</span>
+                    <span class="text-muted">@Model.BatteryVoltage1ToBattery420.Min().ToString("f1") mV</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <h6 class="my-0">电池单体代号</h6>
@@ -150,12 +165,45 @@
                         <thead class="thead-light">
                             <tr>
                                 <th data-field="index">名称</th>
-                                <th data-field="bmsSeriesNumber">型号</th>
-                                <th data-field="batterySeriesNumber">高边开关</th>
-                                <th data-field="projectInfo.customerProjectNumber">高压检测</th>
-                                <th data-field="projectInfo.customerProjectName">状态</th>
+                                <th data-field="RelayName">名称</th>
+                                <th data-field="batterySeriesNumber">状态</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>预充继电器</td>
+                                @if (Model.PrechargeRelayStatus == 0) {
+                                    <td class="text-muted">断开</td>
+                                } else if (Model.PrechargeRelayStatus == 1) {
+                                    <td class="text-success">闭合</td>
+                                } else {
+                                    <td class="text-danger">告警</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>总正继电器</td>
+                                @if (Model.MainPositiveRelayStatus == 0) {
+                                    <td class="text-muted">断开</td>
+                                } else if (Model.MainPositiveRelayStatus == 1) {
+                                    <td class="text-success">闭合</td>
+                                } else {
+                                    <td class="text-danger">告警</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>总负继电器</td>
+                                @if (Model.MainNegativeRelayStatus == 0) {
+                                    <td class="text-muted">断开</td>
+                                } else if (Model.MainNegativeRelayStatus == 1) {
+                                    <td class="text-success">闭合</td>
+                                } else {
+                                    <td class="text-danger">告警</td>
+                                }
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -177,13 +225,21 @@
                            data-pagination="true">
                         <thead class="thead-light">
                             <tr>
-                                <th data-field="index">序号</th>
-                                <th data-field="bmsSeriesNumber">发生时间</th>
-                                <th data-field="batterySeriesNumber">故障类型</th>
-                                <th data-field="projectInfo.customerProjectNumber">报警等级</th>
-                                <th data-field="projectInfo.customerProjectName">持续时长</th>
+                                <th>序号</th>
+                                <th>故障类型</th>
+                                <th>报警等级</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @for (int i = 0; i < @alarmProps.Count; i++) {
+                                <tr>
+                                    <td>@(i+1)</td>
+                                    <td>@alarmProps[i].DisplayName</td>
+                                    <td>@alarmProps[i].AlarmIndex</td>
+                                </tr>
+                            }
+
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -214,5 +270,5 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/Home/real_time_status.js"></script>
+<script src="~/js/Home/real_time_status.js"></script>
 }

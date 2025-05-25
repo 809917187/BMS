@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\Home\init_24hour_status_chart.js" />
-    <Content Remove="wwwroot\js\Home\init_alarm_status_chart.js" />
-    <Content Remove="wwwroot\js\Home\init_charge_discharge_chart.js" />
-    <Content Remove="wwwroot\js\Home\refresh_page_by_project.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
   </ItemGroup>
 
@@ -626,6 +619,7 @@
     <None Include="wwwroot\js\GroupManagement\add_group.js" />
     <None Include="wwwroot\js\GroupManagement\bind_project.js" />
     <None Include="wwwroot\js\Home\init_baidu_map.js" />
+    <None Include="wwwroot\js\Home\real_time_status.js" />
     <None Include="wwwroot\js\Home\refresh_page.js" />
     <None Include="wwwroot\js\ProjectManagement\add_project.js" />
     <None Include="wwwroot\js\Shared\addUser.js" />

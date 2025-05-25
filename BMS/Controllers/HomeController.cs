@@ -8,7 +8,9 @@ using BMS.ViewModel.Home;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace BMS.Controllers {
     public class HomeController : Controller {
@@ -69,6 +71,9 @@ namespace BMS.Controllers {
 
         public IActionResult RealTimeStatus(string sn) {
             var model = _deviceManagementService.GetLatestBatteryClusterInfosBySn(sn);
+            if (model == null) {
+                return View("Error");
+            }
             return View(model);
         }
 
@@ -121,12 +126,14 @@ namespace BMS.Controllers {
             var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
 
-            ret.CumulativeChargeEnergy = latestData.Sum(S => S.CumulativeChargeEnergy);
-            ret.CumulativeDischargeEnergy = latestData.Sum(S => S.CumulativeDischargeEnergy);
+            ret.CumulativeChargeEnergy = latestData.Sum(S => S.CumulativeChargeEnergy).ToString("f1");
+            ret.CumulativeDischargeEnergy = latestData.Sum(S => S.CumulativeDischargeEnergy).ToString("f1");
 
 
             return Ok(ret);
         }
+
+
 
         [HttpPost]
         public IActionResult GetWorkingStatusChart([FromBody] SelectedInfo selectedInfo) {
@@ -148,6 +155,36 @@ namespace BMS.Controllers {
 
         }
 
+        [HttpPost]
+        public IActionResult GetSummaryAnalysisChart([FromBody] SelectedInfo selectedInfo) {
+            var _deviceInfos = _cache.Get("DeviceInfosCache") as List<DeviceInfo>;
+            if (_deviceInfos == null) {
+                return BadRequest(string.Empty);
+            }
+            var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
+            List<BatteryClusterInfo> data = _deviceManagementService.GetDailyBatteryClusterInfos(allDeviceSNs);
+            if (selectedInfo.summaryAnalysisType == 1) {
+                return Ok(data.GroupBy(s => s.Sn).Select(g => new {
+                    sn = g.Key,
+                    data = g.OrderBy(x => x.UploadTime).Select(x => new {
+                        time = x.UploadTime.ToString("HH:mm:ss"),
+                        value = x.HighestCellVoltage
+                    })
+                }));
+            }else if (selectedInfo.summaryAnalysisType == 2) {
+                return Ok(data.GroupBy(s => s.Sn).Select(g => new {
+                    sn = g.Key,
+                    data = g.OrderBy(x => x.UploadTime).Select(x => new {
+                        time = x.UploadTime.ToString("HH:mm:ss"),
+                        value = x.CellAverageTemperature
+                    })
+                }));
+            }
+
+
+            return BadRequest(string.Empty);
+
+        }
 
         [HttpPost]
         public IActionResult GetDeviceList([FromBody] SelectedInfo selectedInfo) {
@@ -191,26 +228,34 @@ namespace BMS.Controllers {
             }
             var allDeviceSNs = this.GetAllDeviceSNByTypeAndIds(selectedInfo);
             var latestData = _batteryClusterInfos.Where(s => allDeviceSNs.Contains(s.Sn));
-            int alarm1 = latestData.Sum(m => new[] { m.CellOvervoltageAlarmLevel1, m.CellUndervoltageAlarmLevel1, m.CellOvertemperatureAlarmLevel1, m.CellLowTemperatureAlarmLevel1
-                , m.CellVoltageDifferenceAlarmLevel1, m.ChargeOvercurrentAlarmLevel1,m.DischargeOvercurrentAlarmLevel1,m.SocLowAlarmLevel1,m.SocDifferenceTooLargeAlarmLevel1,
-                m.InterClusterCirculationAlarmLevel1,m.InterClusterCurrentDifferenceAlarmLevel1,m.GroupTerminalOvervoltageAlarmLevel1,m.GroupTerminalUndervoltageAlarmLevel1,
-                m.PoleOvertemperatureAlarmLevel1
-            }.Count(v => v == 1));
-            int alarm2 = latestData.Sum(m => new[] { m.InsulationLowAlarmLevel1,m.CellOvervoltageAlarmLevel2,m.CellUndervoltageAlarmLevel2,m.CellOvertemperatureAlarmLevel2,
-                m.CellLowTemperatureAlarmLevel2,m.CellVoltageDifferenceAlarmLevel2,m.ChargeOvercurrentAlarmLevel2,m.DischargeOvercurrentAlarmLevel2,m.SocLowAlarmLevel2,
-                m.SocDifferenceTooLargeAlarmLevel2,m.InsulationLowAlarmLevel2,m.InterClusterCirculationAlarmLevel2,m.InterClusterCurrentDifferenceAlarmLevel2,m.GroupTerminalOvervoltageAlarmLevel2,
-                m.GroupTerminalUndervoltageAlarmLevel2,m.PoleOvertemperatureAlarmLevel2
-            }.Count(v => v == 1));
-            int alarm3 = latestData.Sum(m => new[] { m.CellOvervoltageAlarmLevel3,m.CellUndervoltageAlarmLevel3,m.CellOvertemperatureAlarmLevel3,m.CellLowTemperatureAlarmLevel3,
-                m.CellVoltageDifferenceAlarmLevel3,m.ChargeOvercurrentAlarmLevel3,m.DischargeOvercurrentAlarmLevel3, m.SocLowAlarmLevel3,m.SocDifferenceTooLargeAlarmLevel3,
-                m.InsulationLowAlarmLevel3,m.InterClusterCirculationAlarmLevel3,m.InterClusterCurrentDifferenceAlarmLevel3,m.GroupTerminalOvervoltageAlarmLevel3,
-                m.GroupTerminalUndervoltageAlarmLevel3,m.PoleOvertemperatureAlarmLevel3
-            }.Count(v => v == 1));
+
+            int alarm1 = 0;
+            int alarm2 = 0;
+            int alarm3 = 0;
+            foreach (BatteryClusterInfo batteryClusterInfo in latestData) {
+                var alarmPros = typeof(BatteryClusterInfo).GetProperties()
+                    .Where(p => p.GetCustomAttribute<BMS.AttributeTag.AlarmAttribute>() != null)
+                    .Select(p => new {
+                        AlarmIndex = p.GetCustomAttribute<BMS.AttributeTag.AlarmAttribute>().Index,
+                        AlarmValue = p.GetValue(batteryClusterInfo)
+                    }).Where(x => Convert.ToInt32(x.AlarmValue) == 1).ToList();
+                foreach (var prop in alarmPros) {
+                    if (prop.AlarmIndex == 1) {
+                        alarm1++;
+                    } else if (prop.AlarmIndex == 2) {
+                        alarm2++;
+                    } else {
+                        alarm3++;
+                    }
+                }
+            }
+
+
             var result = new List<object>
             {
-                new { status = "一级告警", count = alarm1 },
-                new { status = "二级告警", count = alarm2 },
-                new { status = "三级告警", count = alarm3 }
+                new { status = "轻微告警", count = alarm1 },
+                new { status = "一般告警", count = alarm2 },
+                new { status = "严重告警", count = alarm3 },
             };
             return Ok(result);
 

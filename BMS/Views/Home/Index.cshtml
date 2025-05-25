@@ -14,7 +14,7 @@
             </nav>
             <div class="tab-content" id="nav-tabContent">
 
-                <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" data-tab-type="1" >
                     <div class="d-flex justify-content-center p-2">
                         <button class="btn btn-primary d-flex align-items-center justify-content-center w-100" id="refreshPageByProject"
                                 type="button">
@@ -31,7 +31,7 @@
                         </div>
                     }
                 </div>
-                <div class="tab-pane fade " id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <div class="tab-pane fade " id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" data-tab-type="2">
                     <div class="d-flex justify-content-center p-2">
                         <button class="btn btn-primary d-flex align-items-center justify-content-center w-100 " id="refreshPageByCustomer"
                                 type="button">
@@ -48,7 +48,7 @@
                         </div>
                     }
                 </div>
-                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" data-tab-type="3">
                     <button class="btn btn-primary d-flex align-items-center justify-content-center w-100 " id="refreshPageByGroup"
                             type="button">
                         UPDATE
@@ -132,7 +132,7 @@
         </div>
 
         <div class="row d-flex align-items-stretch pt-3">
-            <div class="col-4">
+            <div class="col-12">
                 <div class="card h-100">
                     <div class="card-header">
                         <div class="row">
@@ -164,7 +164,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-8">
+            @* <div class="col-8">
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -178,7 +178,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> *@
 
         </div>
 
@@ -258,9 +258,19 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12">
-                                <div class="col-12" id="chart_charge_discharge" style="height:400px;">
-                                </div>
+                            <div class="col-1">
+                                <fieldset class="mb-3">
+                                    <div class="form-check">
+                                        <input type="radio" name="radios" class="form-check-input" checked value="1" id="exampleRadio1">
+                                        <label class="form-check-label" for="exampleRadio1">最小电压</label>
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="radio" name="radios" class="form-check-input" value="2" id="exampleRadio2">
+                                        <label class="form-check-label" for="exampleRadio2">单体平均温度</label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-11" id="chart_summary_analysis" style="height:400px;">
                             </div>
                         </div>
 
@@ -339,11 +349,11 @@
     var GetAlarmStatusChart = '@Url.Action("GetAlarmStatusChart", "Home")';
     var GetLast24HourStatusChart = '@Url.Action("GetLast24HourStatusChart", "Home")';
     var GetDeviceList = '@Url.Action("GetDeviceList", "Home")';
+    var GetSummaryAnalysisChart = '@Url.Action("GetSummaryAnalysisChart", "Home")';
 
 </script>
 <script src="~/js/Home/refresh_page.js"></script>
 @*<script src="~/js/Home/init_baidu_map.js"></script>*@
-<script src="~/js/Home/init_charge_discharge_chart.js"></script>
 @*<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=TvAOEF4TlFxLzTzVTkzWrEMQ7PcUilkd"></script>*@
 <script>
     // 选择所有复选框

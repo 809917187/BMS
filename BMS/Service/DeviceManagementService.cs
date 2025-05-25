@@ -87,7 +87,49 @@ namespace BMS.Service {
             }
         }
 
+        public List<BatteryClusterInfo> GetDailyBatteryClusterInfos(List<string> snList) {
+            List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 
+            try {
+                using (ClickHouseConnection connection = new ClickHouseConnection(_connectionStringClickHouse)) {
+                    connection.Open();
+
+                    // 定义 SQL 查询
+                    using (var command = connection.CreateCommand()) {
+                        var snListLiteral = string.Join(",", snList.Select(sn => $"'{sn.Replace("'", "''")}'"));
+
+                        command.CommandText = $@"
+                            SELECT sn, upload_time, device_type, device_name, device_id, data 
+                            FROM battery_cluster_information 
+                            WHERE sn IN ({snListLiteral})
+                              AND toDate(upload_time) = today()
+                            ORDER BY upload_time DESC";
+
+                        using (var reader = command.ExecuteReader()) {
+                            List<OrignialBatteryClusterData> info = new List<OrignialBatteryClusterData>();
+                            while (reader.Read()) {
+                                info.Add(new OrignialBatteryClusterData {
+                                    Sn = reader.GetString(reader.GetOrdinal("sn")),
+                                    UploadTime = reader.GetDateTime(reader.GetOrdinal("upload_time")),
+                                    DeviceType = reader.GetString(reader.GetOrdinal("device_type")),
+                                    DeviceName = reader.GetString(reader.GetOrdinal("device_name")),
+                                    DeviceId = reader.GetString(reader.GetOrdinal("device_id")),
+                                    PointData = (int[])reader.GetValue(reader.GetOrdinal("data"))
+                                });
+                            }
+
+                            return this.PraseBatteryClusterInfo(info);
+                        }
+
+                    }
+
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return ret;
+        }
         public List<BatteryClusterInfo> GetBatteryClusterInfosBySn(string sn) {
             List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 
@@ -146,7 +188,30 @@ namespace BMS.Service {
                 batteryClusterInfo.DeviceId = orignialBatteryData.DeviceId;
 
                 //解析
-                batteryClusterInfo.BcuOperatingStatus =Convert.ToInt32( batteryClusterInfo.BcuOperatingStatus) & 0x0F;
+                batteryClusterInfo.BcuOperatingStatus = Convert.ToInt32(batteryClusterInfo.BcuOperatingStatus) & 0x0F;
+                batteryClusterInfo.TotalVoltage = batteryClusterInfo.TotalVoltage * 0.1f;
+                batteryClusterInfo.TotalCurrent = batteryClusterInfo.TotalCurrent * 0.1f;
+                batteryClusterInfo.RatedTotalVoltage = batteryClusterInfo.RatedTotalVoltage * 0.1f;
+                batteryClusterInfo.RatedCapacity = batteryClusterInfo.RatedCapacity * 0.1f;
+                batteryClusterInfo.RemainingCapacity = batteryClusterInfo.RemainingCapacity * 0.1f;
+                batteryClusterInfo.RatedEnergy = batteryClusterInfo.RatedEnergy * 0.1f;
+                batteryClusterInfo.RemainingEnergy = batteryClusterInfo.RemainingEnergy * 0.1f;
+                batteryClusterInfo.MaxAllowableDischargeCurrent = batteryClusterInfo.MaxAllowableDischargeCurrent * 0.1f;
+                batteryClusterInfo.MaxAllowableDischargePower = batteryClusterInfo.MaxAllowableDischargePower * 0.1f;
+                batteryClusterInfo.MaxAllowableChargeCurrent = batteryClusterInfo.MaxAllowableChargeCurrent * 0.1f;
+                batteryClusterInfo.MaxAllowableChargePower = batteryClusterInfo.MaxAllowableChargePower * 0.1f;
+                batteryClusterInfo.DailyChargeCapacity = batteryClusterInfo.DailyChargeCapacity * 0.1f;
+                batteryClusterInfo.DailyChargeEnergy = batteryClusterInfo.DailyChargeEnergy * 0.1f;
+                batteryClusterInfo.DailyDischargeCapacity = batteryClusterInfo.DailyDischargeCapacity * 0.1f;
+                batteryClusterInfo.DailyDischargeEnergy = batteryClusterInfo.DailyDischargeEnergy * 0.1f;
+                batteryClusterInfo.DailyChargeTime = batteryClusterInfo.DailyChargeTime * 0.1f;
+                batteryClusterInfo.DailyDischargeTime = batteryClusterInfo.DailyDischargeTime * 0.1f;
+                batteryClusterInfo.CumulativeChargeCapacity = batteryClusterInfo.CumulativeChargeCapacity * 0.1f;
+                batteryClusterInfo.CumulativeChargeEnergy = batteryClusterInfo.CumulativeChargeEnergy * 0.1f;
+                batteryClusterInfo.CumulativeDischargeCapacity = batteryClusterInfo.CumulativeDischargeCapacity * 0.1f;
+                batteryClusterInfo.CumulativeDischargeEnergy = batteryClusterInfo.CumulativeDischargeEnergy * 0.1f;
+                batteryClusterInfo.CumulativeChargeTime = batteryClusterInfo.CumulativeChargeTime * 0.1f;
+
 
 
                 ret.Add(batteryClusterInfo);
@@ -182,7 +247,6 @@ namespace BMS.Service {
 
 
         public BatteryClusterInfo GetLatestBatteryClusterInfosBySn(string sn) {
-            List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 
             try {
                 using (ClickHouseConnection connection = new ClickHouseConnection(_connectionStringClickHouse)) {
@@ -223,7 +287,7 @@ namespace BMS.Service {
                 Console.WriteLine($"Error: {ex.Message}");
             }
 
-            return ret[0];
+            return null;
         }
         public List<BatteryClusterInfo> GetLatestBatteryClusterInfos() {
             List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();

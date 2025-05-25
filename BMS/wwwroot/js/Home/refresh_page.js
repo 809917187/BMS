@@ -18,6 +18,14 @@ $(document).ready(function () {
         pageSize: 10,  // 默认每页10条
         pageList: [10, 20, 50, 100],  // 可选分页大小
     });
+
+    $('input[name="radios"]').on('change', function () {
+        if ($(this).is(':checked')) {
+            const type = $('.tab-pane.active.show').data('tab-type');
+            let selectedProject = getSelectedProjectIds(type);
+            refreshSummaryAnalysisChart(selectedProject, type, $(this).val());
+        }
+    });
 });
 
 function refreshPage(type) {
@@ -27,13 +35,73 @@ function refreshPage(type) {
         return;
     }
 
-    
+
     refreshProjectOverview(selectedProject, type);
     refreshWorkingStatusChart(selectedProject, type);
     refreshSOCStatusChart(selectedProject, type);
     refreshAlarmStatusChart(selectedProject, type);
     refresh24HoursStatusChart(selectedProject, type);
     refreshDeviceListTable(selectedProject, type);
+    refreshSummaryAnalysisChart(selectedProject, type, "1");
+}
+
+
+function refreshSummaryAnalysisChart(selectedProjectIds, type,summary_type) {
+
+    var data = JSON.stringify({
+        selectedIds: selectedProjectIds,
+        type: parseInt(type, 10),
+        summaryAnalysisType: parseInt(summary_type, 10)
+    })
+
+    $.ajax({
+        url: GetSummaryAnalysisChart,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: data,
+        success: function (res) {
+            var seriesData = [];
+            var timeAxis = new Set();
+
+            res.forEach(function (device) {
+                var series = {
+                    name: device.sn,
+                    type: 'line',
+                    data: []
+                };
+
+                device.data.forEach(function (point) {
+                    series.data.push([point.time, point.value]);
+                    timeAxis.add(point.time);
+                });
+
+                seriesData.push(series);
+            });
+
+            var chart = echarts.init(document.getElementById('chart_summary_analysis'));
+            chart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: res.map(d => d.sn)
+                },
+                xAxis: {
+                    type: 'category',
+                    data: Array.from(timeAxis).sort()
+                },
+                yAxis: {
+                    type: 'value',
+                    name: ''
+                },
+                series: seriesData
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("获取设备数据失败:", error);
+        }
+    });
 }
 
 function refreshDeviceListTable(selectedProjectIds, type) {
@@ -278,7 +346,7 @@ function refreshWorkingStatusChart(selectedProjectIds, type) {
             myChart.setOption(option);
             $("#charging_device_count").text(response[2].count);
             $("#online_device_count").text(response[1].count + response[2].count + response[3].count);
-            
+
         },
         error: function (xhr, status, error) {
             console.error("获取工作状态数据失败:", error);
@@ -303,8 +371,8 @@ function refreshProjectOverview(selectedProjectIds, type) {
         success: function (data) {
             $("#project_total_count").text(data.porjectCount);
             $("#device_total_count").text(data.totalDeviceCount);
-            $("#cumulative_charge_energy").text(data.cumulativeChargeEnergy);
-            $("#cumulative_discharge_energy").text(data.cumulativeDischargeEnergy);
+            $("#cumulative_charge_energy").text(data.cumulativeChargeEnergy + " KWh");
+            $("#cumulative_discharge_energy").text(data.cumulativeDischargeEnergy + " KWh");
 
             // 在这里更新页面上的内容，例如填充表格或更新 DOM
         },
