@@ -17,7 +17,7 @@ namespace BMS.MQTT {
 
         [Obsolete]
         public MqttSubscribeService(ILogger<MqttSubscribeService> logger) {
-            /*var factory = new MqttFactory();
+            var factory = new MqttFactory();
             _mqttClient = factory.CreateMqttClient();
 
             _options = new MqttClientOptionsBuilder()
@@ -41,11 +41,11 @@ namespace BMS.MQTT {
                 var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                 MQTTHelperClickHouse.SaveMqttPeriodDataToDB(payload);
                 return Task.CompletedTask;
-            };*/
+            };
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-            /*while (!stoppingToken.IsCancellationRequested) {
+            while (!stoppingToken.IsCancellationRequested) {
                 if (!_mqttClient.IsConnected) {
                     try {
                         await _mqttClient.ConnectAsync(_options, stoppingToken);
@@ -59,14 +59,14 @@ namespace BMS.MQTT {
 
             if (_mqttClient.IsConnected) {
                 await _mqttClient.DisconnectAsync();
-            }*/
+            }
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken) {
-            /*if (_mqttClient.IsConnected) {
+            if (_mqttClient.IsConnected) {
                 await _mqttClient.DisconnectAsync();
             }
-            await base.StopAsync(cancellationToken);*/
+            await base.StopAsync(cancellationToken);
         }
     }
 }
