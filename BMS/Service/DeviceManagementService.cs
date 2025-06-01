@@ -5,6 +5,9 @@ using BMS.Models.ProjectManagement;
 using ClickHouse.Client.ADO;
 using Dapper;
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
+using NodaTime;
+using Org.BouncyCastle.Ocsp;
 using System.Reflection;
 
 namespace BMS.Service {
@@ -130,7 +133,41 @@ namespace BMS.Service {
 
             return ret;
         }
-        public List<BatteryClusterInfo> GetBatteryClusterInfosBySn(string sn) {
+
+
+        public long GetTotalCountOfBatteryClusterInfos(string sn) {
+            try {
+                using (ClickHouseConnection connection = new ClickHouseConnection(_connectionStringClickHouse)) {
+                    connection.Open();
+
+                    // 定义 SQL 查询
+                    using (var command = connection.CreateCommand()) {
+                        command.CommandText = $@"
+                            SELECT COUNT(sn) AS total_count  
+                            FROM battery_cluster_information 
+                            WHERE sn = @sn ";
+                        var param = command.CreateParameter();
+                        param.ParameterName = "sn";
+                        param.Value = sn;
+                        command.Parameters.Add(param);
+
+                        using (var reader = command.ExecuteReader()) {
+                            while (reader.Read()) {
+                                ulong count = reader.GetFieldValue<ulong>(reader.GetOrdinal("total_count"));
+                                return checked((long)count); // 使用 checked 避免溢出异常
+                            }
+                        }
+
+                    }
+
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
+            return 0;
+        }
+        public List<BatteryClusterInfo> GetBatteryClusterInfosBySn(string sn, int limit, int offset) {
             List<BatteryClusterInfo> ret = new List<BatteryClusterInfo>();
 
             try {
@@ -139,11 +176,12 @@ namespace BMS.Service {
 
                     // 定义 SQL 查询
                     using (var command = connection.CreateCommand()) {
-                        command.CommandText = @"
+                        command.CommandText = $@"
                             SELECT sn, upload_time,device_type,device_name ,device_id,data 
                             FROM battery_cluster_information 
                             WHERE sn = @sn 
-                            ORDER BY upload_time DESC ";
+                            ORDER BY upload_time DESC 
+                            LIMIT {limit} OFFSET {offset}";
                         var param = command.CreateParameter();
                         param.ParameterName = "sn";
                         param.Value = sn;

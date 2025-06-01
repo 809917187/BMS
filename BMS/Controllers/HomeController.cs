@@ -64,9 +64,18 @@ namespace BMS.Controllers {
         }
 
         public IActionResult DeviceDetails(string sn) {
-            var mode = _deviceManagementService.GetBatteryClusterInfosBySn(sn);
-            return View(mode);
+            ViewBag.Sn = sn;
+            return View();
         }
+
+        [HttpGet]
+        public IActionResult GetDeviceDetailsPaged(string sn, int limit, int offset, string search) {
+            var rows = _deviceManagementService.GetBatteryClusterInfosBySn(sn, limit, offset);
+
+            var total = _deviceManagementService.GetTotalCountOfBatteryClusterInfos(sn);
+            return Json(new { total, rows });
+        }
+
 
 
         public IActionResult RealTimeStatus(string sn) {
@@ -171,7 +180,7 @@ namespace BMS.Controllers {
                         value = x.HighestCellVoltage
                     })
                 }));
-            }else if (selectedInfo.summaryAnalysisType == 2) {
+            } else if (selectedInfo.summaryAnalysisType == 2) {
                 return Ok(data.GroupBy(s => s.Sn).Select(g => new {
                     sn = g.Key,
                     data = g.OrderBy(x => x.UploadTime).Select(x => new {
