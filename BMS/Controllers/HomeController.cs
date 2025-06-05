@@ -188,6 +188,38 @@ namespace BMS.Controllers {
                         value = x.CellAverageTemperature
                     })
                 }));
+            } else if (selectedInfo.summaryAnalysisType == 3) {
+                return Ok(data.GroupBy(s => s.Sn).Select(g => new {
+                    sn = g.Key,
+                    data = g.OrderBy(x => x.UploadTime).Select(x => new {
+                        time = x.UploadTime.ToString("HH:mm:ss"),
+                        value = x.DailyChargeEnergy
+                    })
+                }));
+            } else if (selectedInfo.summaryAnalysisType == 4) {
+                return Ok(data.GroupBy(s => s.Sn).Select(g => new {
+                    sn = g.Key,
+                    data = g.OrderBy(x => x.UploadTime).Select(x => new {
+                        time = x.UploadTime.ToString("HH:mm:ss"),
+                        value = x.DailyDischargeEnergy
+                    })
+                }));
+            } else if (selectedInfo.summaryAnalysisType == 5) {
+                return Ok(data.GroupBy(s => s.Sn).Select(g => new {
+                    sn = g.Key,
+                    data = g.OrderBy(x => x.UploadTime).Select(x => new {
+                        time = x.UploadTime.ToString("HH:mm:ss"),
+                        value = x.CumulativeChargeEnergy
+                    })
+                }));
+            } else if (selectedInfo.summaryAnalysisType == 6) {
+                return Ok(data.GroupBy(s => s.Sn).Select(g => new {
+                    sn = g.Key,
+                    data = g.OrderBy(x => x.UploadTime).Select(x => new {
+                        time = x.UploadTime.ToString("HH:mm:ss"),
+                        value = x.CumulativeDischargeEnergy
+                    })
+                }));
             }
 
 

@@ -227,7 +227,7 @@ namespace BMS.Service {
 
                 //解析
                 batteryClusterInfo.BcuOperatingStatus = Convert.ToInt32(batteryClusterInfo.BcuOperatingStatus) & 0x0F;
-                batteryClusterInfo.TotalVoltage = batteryClusterInfo.TotalVoltage * 0.1f;
+                batteryClusterInfo.TotalVoltage = MathF.Round(batteryClusterInfo.TotalVoltage * 0.1f,1);
                 batteryClusterInfo.TotalCurrent = batteryClusterInfo.TotalCurrent * 0.1f;
                 batteryClusterInfo.RatedTotalVoltage = batteryClusterInfo.RatedTotalVoltage * 0.1f;
                 batteryClusterInfo.RatedCapacity = batteryClusterInfo.RatedCapacity * 0.1f;

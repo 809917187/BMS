@@ -7,11 +7,13 @@
 function initChart(chart_id, title) {
     // 获取 DOM 元素并从 data-* 属性中提取数据
     var chartElement = document.getElementById(chart_id);
-    var aaaData = JSON.parse(chartElement.getAttribute('data-aaa'));
+    var valuesData = JSON.parse(chartElement.getAttribute('data-values'));
+    var countData = parseInt(chartElement.getAttribute('data-count'), 10);
+    valuesData = valuesData.slice(0, countData);
 
     // 获取 x 轴数据（即数组下标）
-    const xAxisData = aaaData.map((value, index) => index);
-    const yAxisData = aaaData;  // 纵轴数据为 aaa 数组的值
+    const xAxisData = valuesData.map((value, index) => index);
+    const yAxisData = valuesData;  // 纵轴数据为 aaa 数组的值
 
     // 初始化 ECharts 实例
     var chart = echarts.init(chartElement);
